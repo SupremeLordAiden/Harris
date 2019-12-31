@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
@@ -15,8 +15,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-@Autonomous(name="Auto Meet 1 Foundation", group="Linear Opmode")
-public class Meet1AutoFoundation extends LinearOpMode {
+@Disabled
+public class Meet0AutoFoundation extends LinearOpMode {
 
     // Declare OpMode members(motors, servos, and sensors).
     HardWare1 robot1 = new HardWare1();

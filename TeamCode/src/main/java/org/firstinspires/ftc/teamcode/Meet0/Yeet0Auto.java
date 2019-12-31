@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -16,7 +18,8 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
-@Autonomous(name="Red Auto Meet 0", group="Linear Opmode")
+@Disabled
+//@Autonomous(name="Red Auto Meet 0", group="Linear Opmode")
 
 public class Yeet0Auto extends LinearOpMode {
     //detection Stuff
@@ -93,8 +96,8 @@ public class Yeet0Auto extends LinearOpMode {
         telemetry.update();
 
         //are you really that excited to start? calm calm down
-        robot1.leftServo.setPosition(0.5);
-        robot1.rightServo.setPosition(0.3);
+       //robot1.leftServo.setPosition(0.5);
+        //robot1.rightServo.setPosition(0.3);
         waitForStart();
 
         //straightMM(100,0.5);
@@ -185,7 +188,7 @@ public class Yeet0Auto extends LinearOpMode {
 
                         if (recognition.getLabel().equals("Skystone")) {
                             straightMM(40, 0.2);
-                            robot1.rightServo.setPosition(1);
+                            //robot1.rightServo.setPosition(1);
                             telemetry.addLine("Yayay");
                             strafe(10,0.5);
                             telemetry.update();
@@ -225,24 +228,24 @@ public class Yeet0Auto extends LinearOpMode {
         switch (SkystonePosition1) {
             case 1:
                 straightMM(400, 1);
-                robot1.rightServo.setPosition(0.3);
+                //robot1.rightServo.setPosition(0.3);
                 sleep(1000);
                 straightMM(-200, 1);
                 break;
             case 2:
                 straightMM(500, 0.5);
-                robot1.rightServo.setPosition(0.3);
+                //robot1.rightServo.setPosition(0.3);
                 sleep(1000);
                 straightMM(-100, 0.5);
                 break;
             case 3:
-                robot1.rightServo.setPosition(1);
+                //robot1.rightServo.setPosition(1);
                 telemetry.addLine("Yayay");
                 telemetry.update();
                 sleep(2000);
                 strafe(-195, 0.5);
                 straightMM(600, 1);
-                robot1.rightServo.setPosition(0.3);
+                //robot1.rightServo.setPosition(0.3);
                 sleep(1000);
                 straightMM(-400, 1);
                 break;

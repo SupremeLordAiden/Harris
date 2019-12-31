@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -19,8 +17,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 @Disabled
-//@Autonomous(name="Blue Auto Meet 1 Skystone", group="Linear Opmode")
-public class BlueAutoMeet1Skystone extends LinearOpMode {
+//@Autonomous(name="Auto Yeet 1 Red Foundation", group="Linear Opmode")
+public class Yeet1RedFoundation extends LinearOpMode {
 
     // Declare OpMode members(motors, servos, and sensors).
     HardWare1 robot1 = new HardWare1();
@@ -28,7 +26,6 @@ public class BlueAutoMeet1Skystone extends LinearOpMode {
     private ElapsedTime runtime     = new ElapsedTime();
     Orientation         lastAngles  = new Orientation();
     double correction, globalAngle;
-    private DistanceSensor sensorRange;
 
     @Override
     public void runOpMode() {
@@ -39,7 +36,6 @@ public class BlueAutoMeet1Skystone extends LinearOpMode {
         //just some normal gyro stuff perfectly normal calm down i totally understand this and am not going crazy its 3 am haha im ok trust me this is just a typical comment :)
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
-        sensorRange = hardwareMap.get(DistanceSensor.class, "distance");
 
         parameters.mode = BNO055IMU.SensorMode.IMU;
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -54,47 +50,29 @@ public class BlueAutoMeet1Skystone extends LinearOpMode {
         telemetry.addLine("Oh ya ya");
         telemetry.update();
 
-
         //are you really that excited to start? calm calm down
-        //
+
 
         waitForStart();
 
         //EVERYTHING HAHAHAHAHAHAHAHAHAHAHAHAHAHAH
-        //its 10 pm rn and i dont know why in the world i am writing code
+        rotate(-10, 0.5);
+        straightMM(-350,0.5);
+        robot1.foundationgrabber.setPosition(0.95);
+        sleep(1000);
+        straightMM(200,0.5);
+        rotate(-90, 0.4);
+        //robot1.foundationgrabber.setPosition(0.3);
+        //rotate(-90, 0.3);
+
+        straightMM(-150, 0.5);
+
+        robot1.foundationgrabber.setPosition(0.3);
+        rotate(10,0.5);
+        straightMM(350,0.5);
         robot1.swipeServo.setPosition(0);
-        robot1.grabbythingy.setPosition(0.2);
-        strafe(-350, 0.5);
-        int NumberOfMMforward = 0;
-        runtime.reset();
 
-        while (opModeIsActive() && (runtime.seconds() < 1)) {
-            telemetry.addData("range", String.format("%.01f cm", sensorRange.getDistance(DistanceUnit.CM)));
-            straightMM(10, 0.5);
-            robot1.Squishy1.setPower(-0.5);
-            robot1.Squishy2.setPower(0.5);
-
-            NumberOfMMforward += 1;
-        }
-        robot1.Squishy1.setPower(0);
-        robot1.Squishy2.setPower(0);
-
-        strafe(225, 0.5);
-        rotate(180, 0.5);
-        int actualMM = NumberOfMMforward*10 + 300;
-        straightMM(actualMM, 0.5);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3)) {
-            robot1.Squishy1.setPower(0.5);
-            robot1.Squishy2.setPower(-0.5);
-        }
-
-        straightMM(-200,0.5);
-
-
-
-
-
+        sleep(500);
     }
 
     /*
@@ -267,10 +245,10 @@ public class BlueAutoMeet1Skystone extends LinearOpMode {
             while (robot1.encoderMotor.getCurrentPosition() > closeenough) {
                 correction = checkDirection();
                 double actualPower = correction / 5;
-                robot1.leftDrive.setPower((power + actualPower));
-                robot1.rightDrive.setPower(-(power - actualPower));
-                robot1.backLeftDrive.setPower(-(power + actualPower));
-                robot1.backRightDrive.setPower((power - actualPower));
+                robot1.leftDrive.setPower(-(power + actualPower));
+                robot1.rightDrive.setPower((power - actualPower));
+                robot1.backLeftDrive.setPower((power + actualPower));
+                robot1.backRightDrive.setPower(-(power - actualPower));
 
 
                 telemetry.addData("1 imu heading", lastAngles.firstAngle);
@@ -291,10 +269,10 @@ public class BlueAutoMeet1Skystone extends LinearOpMode {
                 //since we are really close, speed is needed to be slowed down
                 double reductionspeed = power / 2;
 
-                robot1.leftDrive.setPower((reductionspeed + actualPower));
-                robot1.rightDrive.setPower(-(reductionspeed - actualPower));
-                robot1.backLeftDrive.setPower(-(reductionspeed + actualPower));
-                robot1.backRightDrive.setPower((reductionspeed - actualPower));
+                robot1.leftDrive.setPower(-(reductionspeed + actualPower));
+                robot1.rightDrive.setPower((reductionspeed - actualPower));
+                robot1.backLeftDrive.setPower((reductionspeed + actualPower));
+                robot1.backRightDrive.setPower(-(reductionspeed - actualPower));
 
                 //tell the person some info
                 telemetry.addData("1 imu heading", lastAngles.firstAngle);
@@ -312,10 +290,10 @@ public class BlueAutoMeet1Skystone extends LinearOpMode {
             while (robot1.encoderMotor.getCurrentPosition() < closeenough) {
                 correction = checkDirection();
                 double actualPower = correction / 5;
-                robot1.leftDrive.setPower(-(power + actualPower));
-                robot1.rightDrive.setPower((power - actualPower));
-                robot1.backLeftDrive.setPower((power + actualPower));
-                robot1.backRightDrive.setPower(-(power - actualPower));
+                robot1.leftDrive.setPower((power + actualPower));
+                robot1.rightDrive.setPower(-(power - actualPower));
+                robot1.backLeftDrive.setPower(-(power + actualPower));
+                robot1.backRightDrive.setPower((power - actualPower));
 
                 //tell the person some info
                 telemetry.addData("1 imu heading", lastAngles.firstAngle);
@@ -337,9 +315,9 @@ public class BlueAutoMeet1Skystone extends LinearOpMode {
                 double reductionspeed = power / 2;
 
                 robot1.leftDrive.setPower(-(reductionspeed - actualPower));
-                robot1.rightDrive.setPower((reductionspeed + actualPower));
-                robot1.backLeftDrive.setPower((reductionspeed - actualPower));
-                robot1.backRightDrive.setPower(-(reductionspeed + actualPower));
+                robot1.rightDrive.setPower(-(reductionspeed + actualPower));
+                robot1.backLeftDrive.setPower(-(reductionspeed - actualPower));
+                robot1.backRightDrive.setPower((reductionspeed + actualPower));
 
 
                 telemetry.addData("1 imu heading", lastAngles.firstAngle);

@@ -1,0 +1,74 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+@Autonomous(name="Motoro testu", group="Linear Opmode")
+public class Test extends LinearOpMode {
+
+    // Declare OpMode members(motors, servos, and sensors).
+    HardWare1 robot1 = new HardWare1();
+    BNO055IMU imu;
+    private ElapsedTime runtime     = new ElapsedTime();
+    Orientation         lastAngles  = new Orientation();
+    double correction, globalAngle;
+
+    @Override
+    public void runOpMode() {
+
+        // you know that hardware file, here it is being called
+        robot1.init(hardwareMap);
+
+        //just some normal gyro stuff perfectly normal calm down i totally understand this and am not going crazy its 3 am haha im ok trust me this is just a typical comment :)
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = false;
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        //time to init the imu
+        imu.initialize(parameters);
+        robot1.foundationgrabber.setPosition(0.3);
+        robot1.swipeServo.setPosition(0.4);
+        robot1.grabbythingy.setPosition(0.8);
+        telemetry.addLine("Oh ya ya");
+        telemetry.update();
+
+        //are you really that excited to start? calm calm down
+
+
+        waitForStart();
+
+        //EVERYTHING HAHAHAHAHAHAHAHAHAHAHAHAHAHAH
+        robot1.leftDrive.setPower(1);
+        sleep(1000);
+        robot1.leftDrive.setPower(0);
+        robot1.rightDrive.setPower(1);
+        sleep(1000);
+        robot1.rightDrive.setPower(0);
+        robot1.backLeftDrive.setPower(1);
+        sleep(1000);
+        robot1.backLeftDrive.setPower(0);
+        robot1.backRightDrive.setPower(1);
+        sleep(1000);
+        robot1.backRightDrive.setPower(0);
+    }
+
+
+
+
+}

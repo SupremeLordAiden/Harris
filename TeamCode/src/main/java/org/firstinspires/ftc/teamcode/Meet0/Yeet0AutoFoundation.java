@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
@@ -14,7 +15,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-@Autonomous(name="Auto Yeet 0 Foundation", group="Linear Opmode")
+@Disabled
+//@Autonomous(name="Auto Yeet 0 Foundation", group="Linear Opmode")
 public class Yeet0AutoFoundation extends LinearOpMode {
     
     // Declare OpMode members(motors, servos, and sensors).
@@ -41,8 +43,8 @@ public class Yeet0AutoFoundation extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         //time to init the imu
         imu.initialize(parameters);
-        robot1.rightServo.setPosition(0.3);
-        robot1.leftServo.setPosition(0.5);
+        //robot1.rightServo.setPosition(0.3);
+        //robot1.leftServo.setPosition(0.5);
         telemetry.addLine("Oh ya ya");
         telemetry.update();
 
@@ -57,7 +59,7 @@ public class Yeet0AutoFoundation extends LinearOpMode {
         strafe(475,0.5);
         straightMM(75,0.5);
         sleep(1000);
-        robot1.leftServo.setPosition(0);
+        //robot1.leftServo.setPosition(0);
         sleep(1000);
         rotate(-60,0.3);
         straightMM(400,0.3);

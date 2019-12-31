@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode;
+        import com.qualcomm.robotcore.eventloop.opmode.Disabled;
         import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
         import org.firstinspires.ftc.robotcore.external.State;
         import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
         import com.qualcomm.robotcore.util.ElapsedTime;
         import com.qualcomm.robotcore.hardware.DcMotor;
         import com.qualcomm.robotcore.util.Range;
-
-@TeleOp(name="Outreach", group="Linear Opmode")
+@Disabled
+//@TeleOp(name="Outreach", group="Linear Opmode")
 
 
 public class Outreach extends LinearOpMode {

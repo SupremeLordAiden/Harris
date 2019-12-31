@@ -1,6 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -16,13 +21,15 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
-@Autonomous(name="Auto Meet 0", group="Linear Opmode")
+@Disabled
+//@Autonomous(name="Yeet 2 Red Skystone", group="Linear Opmode")
 
-public class Meet0Auto extends LinearOpMode {
-    //detection Stuff
-    private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
-    private static final String LABEL_FIRST_ELEMENT = "Stone";
-    private static final String LABEL_SECOND_ELEMENT = "Skystone";
+public class Yeet2RedSkystone extends LinearOpMode {
+
+    private DistanceSensor distance;
+    private ColorSensor sensorColor;
+
+
     int SkystonePosition1 = 0;
     //0 is not found
     //1 is left side
@@ -30,20 +37,7 @@ public class Meet0Auto extends LinearOpMode {
     //3 is right
 
 
-    private static final String VUFORIA_KEY =
-            "AbgqVUj/////AAABmQJK3C3ywkbBs0xOk9ikb0kYt5NS2MeAfNeX/3J/zV8O2s7cr8Y79sdcDs2TBtBquC5T9bmThY0up87lwOqQfuZsq38AfzSRjJZ5qmhPx94e/bkewmh8RgKErgcE0yAbIWS1QwLZKzBFOA2stTpBUiOXBhkX+p07OaFO0sum959QYli9xdmmBZg/9GzusrqedKMcxXY/4+F+H8ui9B49EBrB+MjFZ6Vs796rp4aUKP5xhIqXY1vR6ylvhJHYJtyM/tGmMZB8tgcw2n+p2/S882jafm9PcbYWVYqGvhMswKB225pMZG+R5dotu2kyC7PThRYCOQ+GQ+FJBWTnqT6Nw9w+6FndzDfTRQygi99K2joN";
 
-    /**
-     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
-     * localization engine.
-     */
-    private VuforiaLocalizer vuforia;
-
-    /**
-     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
-     * Detection engine.
-     */
-    private TFObjectDetector tfod;
 
     // Declare OpMode members(motors, servos, and sensors).
     HardWare1 robot1 = new HardWare1();
@@ -54,29 +48,16 @@ public class Meet0Auto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
-        // first.
-        initVuforia();
 
-        if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
-            initTfod();
-        } else {
-            telemetry.addData("Sorry!", "This device is not compatible with TFOD");
-        }
-
-        /**
-         * Activate TensorFlow Object Detection before we wait for the start command.
-         * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
-         **/
-        float StoneRecognitionx = 0;
-        float SkyStoneRecognitionx = 0;
-        float StonevsSkyStonex = 0;
-        if (tfod != null) {
-            tfod.activate();
-        }
 
         // you know that hardware file, here it is being called
         robot1.init(hardwareMap);
+
+        distance = hardwareMap.get(DistanceSensor.class, "distance");
+
+        // get a reference to the color sensor.
+        sensorColor = hardwareMap.get(ColorSensor.class, "color");
+
 
         //just some normal gyro stuff perfectly normal calm down i totally understand this and am not going crazy its 3 am haha im ok trust me this is just a typical comment :)
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -89,113 +70,152 @@ public class Meet0Auto extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         //time to init the imu
         imu.initialize(parameters);
+        robot1.foundationgrabber.setPosition(0.3);
+        robot1.swipeServo.setPosition(0.3);
+        robot1.grabbythingy.setPosition(0.7);
+        robot1.armthingy.setPosition(0.75);
+        robot1.capstonedropper.setPosition(0.5);
         telemetry.addLine("Oh ya ya");
         telemetry.update();
 
         //are you really that excited to start? calm calm down
-        robot1.leftServo.setPosition(0.5);
-        robot1.rightServo.setPosition(0.3);
 
         waitForStart();
-
-        //straightMM(100,0.5);
-        //moveStraight(2, 0.3);
-        //rotate(15,0.5);
-        while ()
-        strafe(165, 0.5);
-
-        /*
-
-        rotate(90,0.5);
-        moveStraight(5, 0.5);
-        rotate(180,0.5);
-        moveStraight(5, 0.5);
-        rotate(-90,0.5);
-        moveStraight(5, 0.5);
-        rotate(180, 0.5);
-        */
+        robot1.capstonedropper.setPosition(0);
+        straightMM(200, 0.5);
+        robot1.swipeServo.setPosition(0);
+        robot1.grabbythingy.setPosition(0.15);
         boolean skystone = false;
-        int SkystonePossiblePosition    = 1;
+        int SkystonePossiblePosition = 1;
         /*
         1 is maybe left
         2 is maybe middle
         3 is known right
          */
-        while (tfod != null && SkystonePosition1 == 0 && skystone == false && opModeIsActive()) {
-            boolean stone = false;
-
-            // getUpdatedRecognitions() will return null if no new information is available since
-            // the last time that call was made.
-            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-            if (updatedRecognitions != null) {
-                telemetry.addData("# Object Detected", updatedRecognitions.size());
-
-                 if (updatedRecognitions.size() == 1){
-                    for (Recognition recognition : updatedRecognitions) {
-
-                        if (recognition.getLabel().equals("Skystone")) {
-
-                            straightMM(-60, 0.3);
-                            strafe(100, 0.3);
-
-                            telemetry.addLine("Yayay");
-
-                            robot1.squishy1.setPower(1);
-                            robot1.squishy2.setPower(-1);
-                            skystone = true;
-                            if (SkystonePossiblePosition == 1) {
-                                SkystonePosition1 = 1;
-                            }
-                            if (SkystonePossiblePosition == 2) {
-                                SkystonePosition1 = 2;
-                            }
-                        } else {
-                            if (SkystonePossiblePosition == 1) {
-                                SkystonePossiblePosition = 2;
-                                straightMM(-40, 0.5);
-                                telemetry.addLine(":(");
-                                telemetry.update();
-                            }
-                            if (SkystonePossiblePosition == 2) {
-                                SkystonePossiblePosition = 3;
-                                SkystonePosition1 = 3;
-                                skystone = true;
-                            }
-
-                        }
-                    }
-
+        sleep(1000);
+        while (skystone == false) {
+            double skystonevalue = (sensorColor.red() * sensorColor.green()) / (sensorColor.blue() * sensorColor.blue());
+            if (skystonevalue < 2) {
+                telemetry.addLine("skystone");
+                skystone = true;
+                SkystonePosition1 = SkystonePossiblePosition;
+            } else if (skystonevalue >= 2) {
+                telemetry.addLine("not skystone");
+                strafe(100, 0.5);
+                if (SkystonePossiblePosition == 1) {
+                    SkystonePossiblePosition = 2;
+                }  else if (SkystonePossiblePosition == 2) {
+                    SkystonePossiblePosition = 3;
+                    SkystonePosition1 = 3;
+                    skystone = true;
                 }
             }
-
-
         }
+        //time to collection skystone
 
-        //you have escaped detection
-        switch (SkystonePosition1) {
-            case 1:
-                straightMM(400, 1);
-                robot1.rightServo.setPosition(0.3);
-                sleep(1000);
-                straightMM(-200, 1);
-                break;
-            case 2:
-                straightMM(500, 0.5);
-                robot1.rightServo.setPosition(0.3);
-                sleep(1000);
-                straightMM(-100, 0.5);
-                break;
-            case 3:
-                robot1.rightServo.setPosition(1);
-                telemetry.addLine("Yayay");
+        if (SkystonePosition1 == 1) {
+            strafe(200, 0.5);
+            rotate(90, 0.5);
+            strafe(125, 0.5);
+            robot1.Squishy1.setPower(-0.5);
+            robot1.Squishy2.setPower(0.5);
+
+            straightMM(100, 0.3);
+
+
+
+            strafe(-100, 0.5);
+
+            straightMM(300, 0.5);
+            robot1.Squishy1.setPower(0);
+            robot1.Squishy2.setPower(0);
+
+            robot1.swipeServo.setPosition(0.4);
+
+            straightMM(150, 0.75);
+            rotate(90, 0.3);
+
+            straightMM(-150, 0.75);
+            robot1.swipeServo.setPosition(0);
+            robot1.grabbythingy.setPosition(0.8);
+
+            robot1.foundationgrabber.setPosition(1);
+            sleep(1000);
+            straightMM(250, 0.5);
+            robot1.armthingy.setPosition(0.6);
+            rotate(90, 0.5);
+
+            while (robot1.LineraSlide.getCurrentPosition() < 2000) {
+                robot1.LineraSlide.setPower(1);
+                telemetry.addLine("vrooom vroooom");
                 telemetry.update();
-                sleep(2000);
-                strafe(-195, 0.5);
-                straightMM(600, 1);
-                robot1.rightServo.setPosition(0.3);
-                sleep(1000);
-                straightMM(-400, 1);
-                break;
+            }
+            robot1.LineraSlide.setPower(0);
+            robot1.grabbythingy.setPosition(0.15);
+            straightMM(-50, 0.5);
+            robot1.foundationgrabber.setPosition(0.3);
+            sleep(1000);
+            while (robot1.LineraSlide.getCurrentPosition() > 200) {
+                robot1.LineraSlide.setPower(-0.4);
+                telemetry.addLine("nani");
+                telemetry.update();
+            }
+            robot1.LineraSlide.setPower(0);
+            robot1.armthingy.setPosition(0.75);
+            straightMM(300, 0.5);
+        } else if (SkystonePosition1 == 2) {
+            strafe(150, 0.5);
+            rotate(90, 0.5);
+            strafe(125, 0.5);
+            robot1.Squishy1.setPower(-0.5);
+            robot1.Squishy2.setPower(0.5);
+
+            straightMM(100, 0.3);
+
+
+
+            strafe(-125, 0.5);
+            straightMM(300, 1);
+            strafe(150, 1);
+            strafe(-50, 0.5);
+
+            robot1.Squishy1.setPower(0);
+            robot1.Squishy2.setPower(0);
+
+            robot1.swipeServo.setPosition(0.4);
+
+            straightMM(150, 0.75);
+            rotate(90, 0.5);
+
+            straightMM(-150, 0.75);
+            robot1.swipeServo.setPosition(0);
+            robot1.grabbythingy.setPosition(0.8);
+
+            robot1.foundationgrabber.setPosition(1);
+            sleep(1000);
+            straightMM(250, 0.5);
+            robot1.armthingy.setPosition(0.6);
+            rotate(90, 0.5);
+
+            while (robot1.LineraSlide.getCurrentPosition() < 2000) {
+                robot1.LineraSlide.setPower(1);
+                telemetry.addLine("vrooom vroooom");
+                telemetry.update();
+            }
+            robot1.LineraSlide.setPower(0);
+            robot1.grabbythingy.setPosition(0.15);
+            straightMM(-50, 0.5);
+            robot1.foundationgrabber.setPosition(0.3);
+            sleep(1000);
+            while (robot1.LineraSlide.getCurrentPosition() > 200) {
+                robot1.LineraSlide.setPower(-0.4);
+                telemetry.addLine("nani");
+                telemetry.update();
+            }
+            robot1.LineraSlide.setPower(0);
+            robot1.armthingy.setPosition(0.75);
+            straightMM(300, 0.5);
+
         }
 
     }
@@ -230,7 +250,7 @@ public class Meet0Auto extends LinearOpMode {
 
             while (robot1.encoderMotor.getCurrentPosition() > closeenough) {
                 correction = checkDirection();
-                double actualPower = correction / 5;
+                double actualPower = correction;
                 robot1.leftDrive.setPower((power + actualPower));
                 robot1.rightDrive.setPower((power - actualPower));
                 robot1.backLeftDrive.setPower((power + actualPower));
@@ -249,7 +269,7 @@ public class Meet0Auto extends LinearOpMode {
                 correction = checkDirection();
 
                 //this makes the correction power less strong so everything including imu/gyro can actually react
-                double actualPower = correction / 5;
+                double actualPower = correction;
 
                 //since we are really close, speed is needed to be slowed down
                 double reductionspeed = power / 2;
@@ -274,12 +294,12 @@ public class Meet0Auto extends LinearOpMode {
 
             while (robot1.encoderMotor.getCurrentPosition() < closeenough) {
                 correction = checkDirection();
-                double actualPower = correction / 5;
-                robot1.leftDrive.setPower(-(power + actualPower));
-                robot1.rightDrive.setPower(-(power - actualPower));
-                robot1.rightDrive.setPower(-(power - actualPower));
-                robot1.backLeftDrive.setPower(-(power + actualPower));
-                robot1.backRightDrive.setPower(-(power - actualPower));
+                double actualPower = correction;
+                robot1.leftDrive.setPower(-(power - actualPower));
+
+                robot1.rightDrive.setPower(-(power + actualPower));
+                robot1.backLeftDrive.setPower(-(power - actualPower));
+                robot1.backRightDrive.setPower(-(power + actualPower));
 
                 //tell the person some info
                 telemetry.addData("1 imu heading", lastAngles.firstAngle);
@@ -288,6 +308,7 @@ public class Meet0Auto extends LinearOpMode {
                 telemetry.addData("4 actual correction", actualPower);
                 telemetry.addData("5 harris Encoder Position", robot1.encoderMotor.getCurrentPosition());
                 telemetry.addData("6 power:", power);
+
                 telemetry.update();
 
             }
@@ -296,15 +317,15 @@ public class Meet0Auto extends LinearOpMode {
                 correction = checkDirection();
 
                 //this makes the correction power less strong so everything including imu/gyro can actually react
-                double actualPower = correction / 5;
+                double actualPower = correction;
 
                 //since we are really close, speed is needed to be slowed down
                 double reductionspeed = power / 2;
 
-                robot1.leftDrive.setPower(-(reductionspeed + actualPower));
-                robot1.rightDrive.setPower(-(reductionspeed - actualPower));
-                robot1.backLeftDrive.setPower(-(reductionspeed + actualPower));
-                robot1.backRightDrive.setPower(-(reductionspeed - actualPower));
+                robot1.leftDrive.setPower(-(reductionspeed - actualPower));
+                robot1.rightDrive.setPower(-(reductionspeed + actualPower));
+                robot1.backLeftDrive.setPower(-(reductionspeed - actualPower));
+                robot1.backRightDrive.setPower(-(reductionspeed + actualPower));
 
 
                 telemetry.addData("1 imu heading", lastAngles.firstAngle);
@@ -316,6 +337,7 @@ public class Meet0Auto extends LinearOpMode {
             }
 
         }
+
         robot1.leftDrive.setPower(0);
         robot1.rightDrive.setPower(0);
         robot1.backLeftDrive.setPower(0);
@@ -338,7 +360,7 @@ public class Meet0Auto extends LinearOpMode {
 
         while (runtime.time() < time) {
             correction = checkDirection();
-            double actualPower = correction/5;
+            double actualPower = correction;
             robot1.leftDrive.setPower(-(leftDrive + actualPower));
             robot1.rightDrive.setPower(-(rightDrive - actualPower));
             robot1.backLeftDrive.setPower(-(backLeftDrive + actualPower));
@@ -366,19 +388,19 @@ public class Meet0Auto extends LinearOpMode {
         //since we are only going forward, I am only using one motor to measure the enocoder
         //and since there is straightness correction, it should work
         robot1.encoderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
+        telemetry.addData("data:", robot1.encoderMotor.getCurrentPosition());
+        telemetry.update();
         //meaning if you are going backwards
-        if (encodercounts < 0) {
+        if (encodercounts > 0) {
 
             double closeenough = encodercounts * 4/5;
 
-            while (robot1.encoderMotor.getCurrentPosition() > closeenough) {
+            while (robot1.encoderMotor.getCurrentPosition() < closeenough) {
                 correction = checkDirection();
-                double actualPower = correction / 5;
+                double actualPower = correction / 2;
                 robot1.leftDrive.setPower(-(power - actualPower));
-                robot1.rightDrive.setPower((power + actualPower));
-                robot1.backLeftDrive.setPower((power - actualPower));
+                robot1.rightDrive.setPower((power - actualPower));
+                robot1.backLeftDrive.setPower((power + actualPower));
                 robot1.backRightDrive.setPower(-(power + actualPower));
 
 
@@ -390,18 +412,18 @@ public class Meet0Auto extends LinearOpMode {
                 telemetry.update();
             }
 
-            while (robot1.encoderMotor.getCurrentPosition() > encodercounts && closeenough > robot1.encoderMotor.getCurrentPosition()) {
+            while (robot1.encoderMotor.getCurrentPosition() < encodercounts && closeenough < robot1.encoderMotor.getCurrentPosition()) {
                 correction = checkDirection();
 
                 //this makes the correction power less strong so everything including imu/gyro can actually react
-                double actualPower = correction / 5;
+                double actualPower = correction / 2;
 
                 //since we are really close, speed is needed to be slowed down
                 double reductionspeed = power / 2;
 
                 robot1.leftDrive.setPower(-(reductionspeed - actualPower));
-                robot1.rightDrive.setPower((reductionspeed + actualPower));
-                robot1.backLeftDrive.setPower((reductionspeed - actualPower));
+                robot1.rightDrive.setPower((reductionspeed - actualPower));
+                robot1.backLeftDrive.setPower((reductionspeed + actualPower));
                 robot1.backRightDrive.setPower(-(reductionspeed + actualPower));
 
                 //tell the person some info
@@ -413,16 +435,16 @@ public class Meet0Auto extends LinearOpMode {
                 telemetry.update();
             }
 
-        } else if (encodercounts > 0) {
+        } else if (encodercounts < 0) {
             //meaning if you are going forward
             double closeenough = encodercounts * 4/5;
 
-            while (robot1.encoderMotor.getCurrentPosition() < closeenough) {
+            while (robot1.encoderMotor.getCurrentPosition() > closeenough) {
                 correction = checkDirection();
-                double actualPower = correction / 5;
+                double actualPower = correction / 2;
                 robot1.leftDrive.setPower((power + actualPower));
-                robot1.rightDrive.setPower(-(power - actualPower));
-                robot1.backLeftDrive.setPower(-(power + actualPower));
+                robot1.rightDrive.setPower(-(power + actualPower));
+                robot1.backLeftDrive.setPower(-(power - actualPower));
                 robot1.backRightDrive.setPower((power - actualPower));
 
                 //tell the person some info
@@ -439,14 +461,14 @@ public class Meet0Auto extends LinearOpMode {
                 correction = checkDirection();
 
                 //this makes the correction power less strong so everything including imu/gyro can actually react
-                double actualPower = correction / 5;
+                double actualPower = correction / 2;
 
                 //since we are really close, speed is needed to be slowed down
-                double reductionspeed = power / 2;
+                double reductionspeed = power / 3;
 
                 robot1.leftDrive.setPower((reductionspeed + actualPower));
-                robot1.rightDrive.setPower(-(reductionspeed - actualPower));
-                robot1.backLeftDrive.setPower(-(reductionspeed + actualPower));
+                robot1.rightDrive.setPower(-(reductionspeed + actualPower));
+                robot1.backLeftDrive.setPower(-(reductionspeed - actualPower));
                 robot1.backRightDrive.setPower((reductionspeed - actualPower));
 
 
@@ -471,16 +493,16 @@ public class Meet0Auto extends LinearOpMode {
 
         if (degrees < 0)
         {   // turn left.
-            robot1.leftDrive.setPower(power);
-            robot1.rightDrive.setPower(-power);
-            robot1.backLeftDrive.setPower(power);
-            robot1.backRightDrive.setPower(-power);
-        } else if (degrees > 0)
-        {   // turn right.
             robot1.leftDrive.setPower(-power);
             robot1.rightDrive.setPower(power);
             robot1.backLeftDrive.setPower(-power);
             robot1.backRightDrive.setPower(power);
+        } else if (degrees > 0)
+        {   // turn right.
+            robot1.leftDrive.setPower(power);
+            robot1.rightDrive.setPower(-power);
+            robot1.backLeftDrive.setPower(power);
+            robot1.backRightDrive.setPower(-power);
         }
 
         if (degrees < 0)
@@ -499,10 +521,10 @@ public class Meet0Auto extends LinearOpMode {
 
                 double powerwhenclose = power/2;
 
-                robot1.leftDrive.setPower(powerwhenclose);
-                robot1.rightDrive.setPower(-powerwhenclose);
-                robot1.backLeftDrive.setPower(powerwhenclose);
-                robot1.backRightDrive.setPower(-powerwhenclose);
+                robot1.leftDrive.setPower(-powerwhenclose);
+                robot1.rightDrive.setPower(powerwhenclose);
+                robot1.backLeftDrive.setPower(-powerwhenclose);
+                robot1.backRightDrive.setPower(powerwhenclose);
 
                 telemetry.addData("turning right", getAngle());
                 telemetry.update();
@@ -513,20 +535,21 @@ public class Meet0Auto extends LinearOpMode {
             while (opModeIsActive() && getAngle() < howcloseshouldIbe) {
                 telemetry.addData("turning left", getAngle());
                 telemetry.update();
-                while(opModeIsActive() &&  getAngle() < degrees && howcloseshouldIbe < getAngle()) {
-
-                    double powerwhenclose = power/2;
-
-                    robot1.leftDrive.setPower(-powerwhenclose);
-                    robot1.rightDrive.setPower(powerwhenclose);
-                    robot1.backLeftDrive.setPower(-powerwhenclose);
-                    robot1.backRightDrive.setPower(powerwhenclose);
-                    telemetry.addData("turning left", getAngle());
-                    telemetry.update();
-                }
             }
+            while(opModeIsActive() &&  getAngle() < degrees && howcloseshouldIbe < getAngle()) {
 
+                double powerwhenclose = power/2;
+
+                robot1.leftDrive.setPower(powerwhenclose);
+                robot1.rightDrive.setPower(-powerwhenclose);
+                robot1.backLeftDrive.setPower(powerwhenclose);
+                robot1.backRightDrive.setPower(-powerwhenclose);
+                telemetry.addData("turning left", getAngle());
+                telemetry.update();
+            }
         }
+
+
         robot1.leftDrive.setPower(0);
         robot1.rightDrive.setPower(0);
         robot1.backLeftDrive.setPower(0);
@@ -540,7 +563,7 @@ public class Meet0Auto extends LinearOpMode {
 
         while (runtime.time() < time) {
             correction = checkDirection();
-            double actualPower = correction/5;
+            double actualPower = correction;
             robot1.leftDrive.setPower(-(power + actualPower));
             robot1.rightDrive.setPower(-(power - actualPower));
             robot1.backLeftDrive.setPower(-(power + actualPower));
@@ -602,30 +625,5 @@ public class Meet0Auto extends LinearOpMode {
 
         globalAngle = 0;
     }
-    private void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-        //vuforia.setFrameFormat(PIXEL_.RGB565, true);
-        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
-
-    }
-    private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minimumConfidence = 0.8;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
-    }
-
 
 }

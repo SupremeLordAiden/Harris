@@ -30,16 +30,17 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-
+import android.media.MediaPlayer;
 /**
  * This 2019-2020 OpMode illustrates the basics of using the TensorFlow Object Detection API to
  * determine the position of the Skystone game elements.
@@ -50,13 +51,18 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
+@Disabled
+//@TeleOp(name = "SkystoneDetection", group = "Concept")
 
-@Autonomous(name = "Example Code", group = "LinearOpMode")
-public class Harrisx extends LinearOpMode {
+public class SkystoneDetection extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Stone";
     private static final String LABEL_SECOND_ELEMENT = "Skystone";
-
+    int SkystonePosition1 = 0;
+    //0 is not found
+    //1 is left side
+    //2 is middle
+    //3 is right
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
      * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
@@ -108,33 +114,108 @@ public class Harrisx extends LinearOpMode {
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
         waitForStart();
+        float StoneRecognitionx     = 0;
+        float SkyStoneRecognitionx  = 0;
+        float StonevsSkyStonex      = 0;
 
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
-                if (tfod != null) {
-                    // getUpdatedRecognitions() will return null if no new information is available since
-                    // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if (updatedRecognitions != null) {
-                        telemetry.addData("# Object Detected", updatedRecognitions.size());
-                        // step through the list of recognitions and display boundary info.
-                        int i = 0;
+
+        while (opModeIsActive()) {
+            if (tfod != null && SkystonePosition1 == 0) {
+                boolean stone = false;
+                boolean skystone = false;
+                // getUpdatedRecognitions() will return null if no new information is available since
+                // the last time that call was made.
+                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                if (updatedRecognitions != null) {
+                    telemetry.addData("# Object Detected", updatedRecognitions.size());
+
+                    // step through the list of recognitions and display boundary info.
+                    int i = 0;
+                    if (updatedRecognitions.size() == 2) {
                         for (Recognition recognition : updatedRecognitions) {
                             telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
                             telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
                                     recognition.getLeft(), recognition.getTop());
                             telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                                     recognition.getRight(), recognition.getBottom());
+                            if (recognition.getLabel().equals( "Skystone") && skystone == false) {
+                                //Location of the SkyStone
+                                skystone = true;
+                                SkyStoneRecognitionx = recognition.getTop();
+                                telemetry.addData("SkyStoneRecognitionx",SkyStoneRecognitionx);
+                            } else if (recognition.getLabel().equals("Stone") && stone == false) {
+                                //Location of Stone
+                                stone = true;
+                                StoneRecognitionx = recognition.getTop();
+                                telemetry.addData("StoneRecognitionx", StoneRecognitionx);
+
+                            }
+
                         }
+                        //Subtracting the 2 numbers
+                        StonevsSkyStonex = SkyStoneRecognitionx - StoneRecognitionx;
+                        telemetry.addData("Difference:", StonevsSkyStonex);
+                        if (StoneRecognitionx != 0 && SkyStoneRecognitionx != 0) {
+                            if (StonevsSkyStonex > 0) {
+                                SkystonePosition1 = 2;
+                            } else if (StonevsSkyStonex < 0) {
+                                SkystonePosition1 = 1;
+                            }
+                        } else if (SkyStoneRecognitionx == 0 && StoneRecognitionx != 0) {
+                            SkystonePosition1   = 3;
+                        }
+                        switch (SkystonePosition1) {
+                            case 0:
+                                telemetry.addLine("Location of SkyStone: Not Known");
+                                break;
+                            case 1:
+                                telemetry.addLine("Location of SkyStone: Left");
+                                break;
+                            case 2:
+                                telemetry.addLine("Location of SkyStone: Middle");
+                                break;
+                            case 3:
+                                telemetry.addLine("Location of SkyStone: Right");
+                                break;
+
+                        }
+                        telemetry.update();
+                    } else {
+                        telemetry.addData("Not enough: # Object Detected", updatedRecognitions.size());
                         telemetry.update();
                     }
                 }
             }
+            if (SkystonePosition1 != 0) {
+                telemetry.addLine("Detection made");
+
+                switch (SkystonePosition1) {
+                    case 0:
+                        telemetry.addLine("Location of SkyStone: Not Known");
+                        break;
+                    case 1:
+                        telemetry.addLine("Location of SkyStone: Left");
+                        break;
+                    case 2:
+                        telemetry.addLine("Location of SkyStone: Middle");
+                        break;
+                    case 3:
+                        telemetry.addLine("Location of SkyStone: Right");
+                        break;
+
+                }
+                telemetry.update();
+            }
+
         }
+
+
 
         if (tfod != null) {
             tfod.shutdown();
         }
+
+
     }
 
     /**
@@ -147,7 +228,7 @@ public class Harrisx extends LinearOpMode {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        parameters.cameraDirection = CameraDirection.BACK;
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
@@ -162,8 +243,9 @@ public class Harrisx extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minimumConfidence = 0.8;
+        tfodParameters.minimumConfidence = 0.85;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
+
 }

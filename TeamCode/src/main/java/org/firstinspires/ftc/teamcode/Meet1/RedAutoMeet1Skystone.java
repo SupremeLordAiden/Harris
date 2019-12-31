@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.media.MediaDrm;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -17,7 +20,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-@Autonomous(name="Red Auto Meet 1 Skystone", group="Linear Opmode")
+@Disabled
+
+//@Autonomous(name="Red Auto Meet 1 Skystone", group="Linear Opmode")
 public class RedAutoMeet1Skystone extends LinearOpMode {
 
     // Declare OpMode members(motors, servos, and sensors).

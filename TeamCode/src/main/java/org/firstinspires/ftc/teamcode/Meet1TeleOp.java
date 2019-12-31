@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
@@ -10,10 +10,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
-@Disabled
-//(name="Testslide", group="Linear Opmode")
+@TeleOp(name="Meet1TeleOp", group="Linear Opmode")
 
-public class Testslide extends LinearOpMode {
+public class Meet1TeleOp extends LinearOpMode {
 
     // Declare OpMode members(motors, servos, and sensors).
 
@@ -27,10 +26,16 @@ public class Testslide extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         robot1.init(hardwareMap);
+
         robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot1.rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot1.backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot1.backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         distance = hardwareMap.get(DistanceSensor.class, "distance");
-
+        robot1.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        robot1.backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        robot1.rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        robot1.backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
@@ -40,8 +45,8 @@ public class Testslide extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
 
-        robot1.armthingy.setPosition(0.9);
-
+        robot1.autoPush.setPosition(0.5);
+        robot1.autoArm.setPosition(0);
         waitForStart();
 
 
@@ -62,7 +67,14 @@ public class Testslide extends LinearOpMode {
         int oldPosition = 0;
         int PositionofLinearSlide = 0;
         while (opModeIsActive()) {
-
+            robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot1.rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot1.backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot1.backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot1.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            robot1.backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            robot1.rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            robot1.backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             //change the speed of how fast the robot moves with the bumpers on Gamepad 1
             if (gamepad1.left_bumper == true) {
                 motorSpeed = 0.4;
@@ -78,14 +90,8 @@ public class Testslide extends LinearOpMode {
                 squishySpeed = -0.5;
             }
             */
-            if (gamepad2.left_bumper == true) {
-                squishySpeed = 1;
-            } else if (gamepad2.right_bumper == true) {
-                squishySpeed = -1;
-            } else {
-                squishySpeed = 0;
-            }
 
+            squishySpeed = gamepad2.left_trigger - gamepad2.right_trigger;
 
             robot1.Squishy1.setPower(squishySpeed);
             robot1.Squishy2.setPower(-squishySpeed);
@@ -94,6 +100,7 @@ public class Testslide extends LinearOpMode {
                 robot1.grabbythingy.setPosition(0.80);
             } else if (gamepad2.dpad_right == true) {
                 robot1.grabbythingy.setPosition(0.15);
+
             }
 
             if (gamepad2.dpad_down) {
@@ -152,16 +159,18 @@ public class Testslide extends LinearOpMode {
 
             } else if (gamepad2.a == true) {
                 if (robot1.TouchSense.getState() == true) {
-                    LineraSpeed = -1;
+                    if (robot1.LineraSlide.getCurrentPosition() > 1500) {
+                        LineraSpeed = -1;
+                    } else {
+                        LineraSpeed = -0.25;
+                    }
                 } else {
                     LineraSpeed = 0;
                 }
             } else {
                 LineraSpeed = 0;
             }
-
-
-
+            robot1.capstonedropper.setPosition(gamepad2.right_stick_y);
 
 
             robot1.LineraSlide.setPower(LineraSpeed);
@@ -171,11 +180,25 @@ public class Testslide extends LinearOpMode {
             } else if (gamepad1.right_stick_button == true) {
                 robot1.foundationgrabber.setPosition(0.3);
             }
+            if (gamepad2.left_stick_y > 0.525) {
+                robot1.swipeServo.setPosition(0.525);
+            } else if (gamepad2.left_stick_y < 0) {
+                robot1.swipeServo.setPosition(0.925);
+            } else {
+                robot1.swipeServo.setPosition(0.925 - gamepad2.left_stick_y);
+            }
 
-            robot1.swipeServo.setPosition(gamepad2.left_stick_y);
-            telemetry.addData("CurrentPosition:", PositionofLinearSlide);
-            telemetry.addData("Old Position:", oldPosition);
-            telemetry.addData("Encoder data", robot1.LineraSlide.getCurrentPosition());
+
+
+
+            if (gamepad2.left_bumper == true) {
+                robot1.tapeMeasure.setPower(1);
+            } else if (gamepad2.right_bumper == true) {
+                robot1.tapeMeasure.setPower(-1);
+            } else {
+                robot1.tapeMeasure.setPower(0);
+            }
+
             telemetry.addData("Status", "Run Time: " + runtime.toString());
 
             telemetry.update();

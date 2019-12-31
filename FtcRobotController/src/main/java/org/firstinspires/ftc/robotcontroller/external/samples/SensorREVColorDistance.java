@@ -98,10 +98,10 @@ public class SensorREVColorDistance extends LinearOpMode {
         sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
 
         // hsvValues is an array that will hold the hue, saturation, and value information.
-        float hsvValues[] = {0F, 0F, 0F};
+        float[] hsvValues = {0F, 0F, 0F};
 
         // values is a reference to the hsvValues array.
-        final float values[] = hsvValues;
+        final float[] values = hsvValues;
 
         // sometimes it helps to multiply the raw RGB values with a scale factor
         // to amplify/attentuate the measured values.
@@ -127,8 +127,8 @@ public class SensorREVColorDistance extends LinearOpMode {
                     hsvValues);
 
             // send the info back to driver station using telemetry function.
-            telemetry.addData("Distance (cm)",
-                    String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
+            telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
+
             telemetry.addData("Alpha", sensorColor.alpha());
             telemetry.addData("Red  ", sensorColor.red());
             telemetry.addData("Green", sensorColor.green());
