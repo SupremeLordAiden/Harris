@@ -10,14 +10,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="Meet1TeleOp", group="Linear Opmode")
+@TeleOp(name="ILTTeleOp", group="Linear Opmode")
 
-public class Meet1TeleOp extends LinearOpMode {
+public class ILTTeleOp extends LinearOpMode {
 
     // Declare OpMode members(motors, servos, and sensors).
 
     HardWare1 robot1 = new HardWare1();
     private ElapsedTime runtime  = new ElapsedTime();
+    double threadedDistance = 0;
 
     private DistanceSensor distance;
     @Override
@@ -47,6 +48,8 @@ public class Meet1TeleOp extends LinearOpMode {
 
         robot1.autoPush.setPosition(0.8);
         robot1.autoArm.setPosition(0);
+
+        Thread sensorThread = new sensorThread();
         waitForStart();
 
 
@@ -62,10 +65,10 @@ public class Meet1TeleOp extends LinearOpMode {
         double squishySpeed = 0;
 
         double LineraSpeed = 0;
-        boolean LineraWasActive = false;
+
+        sensorThread.start();
+        boolean isChainOutside = true;
         // run until the end of the match (driver presses STOP)
-        int oldPosition = 0;
-        int PositionofLinearSlide = 0;
         while (opModeIsActive()) {
             robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot1.rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -98,15 +101,20 @@ public class Meet1TeleOp extends LinearOpMode {
 
             if (gamepad2.dpad_left == true) {
                 robot1.grabbythingy.setPosition(0.80);
+                isChainOutside = false;
             } else if (gamepad2.dpad_right == true) {
+
                 robot1.grabbythingy.setPosition(0.15);
+                isChainOutside = true;
 
             }
 
             if (gamepad2.dpad_down) {
                 robot1.armthingy.setPosition(0.63);
             } else if (gamepad2.dpad_up) {
-                robot1.armthingy.setPosition(0.75);
+                if (threadedDistance > 5 && isChainOutside == true) {
+                    robot1.armthingy.setPosition(0.75);
+                }
             }
 
             //this control allows for the left joystick to control direction fully positionally
@@ -137,7 +145,7 @@ public class Meet1TeleOp extends LinearOpMode {
 
 
 
-
+            double servoPositionRacPinion = -gamepad2.left_stick_y;
 
             // Show the elapsed game time and wheel power.
 
@@ -159,7 +167,7 @@ public class Meet1TeleOp extends LinearOpMode {
 
             } else if (gamepad2.a == true) {
                 if (robot1.TouchSense.getState() == true) {
-                    if (robot1.LineraSlide.getCurrentPosition() > 1500) {
+                    if (robot1.LineraSlide.getCurrentPosition() > 500) {
                         LineraSpeed = -1;
                     } else {
                         LineraSpeed = -0.25;
@@ -180,13 +188,18 @@ public class Meet1TeleOp extends LinearOpMode {
             } else if (gamepad1.right_stick_button == true) {
                 robot1.foundationgrabber.setPosition(0.3);
             }
-            if (gamepad2.left_stick_y > 0.525) {
-                robot1.swipeServo.setPosition(0.525);
-            } else if (gamepad2.left_stick_y < 0) {
-                robot1.swipeServo.setPosition(0.925);
+            if (threadedDistance > 5) {
+                if (gamepad2.left_stick_y > 0.525) {
+                    robot1.swipeServo.setPosition(0.525);
+                } else if (gamepad2.left_stick_y < 0) {
+                    robot1.swipeServo.setPosition(0.925);
+                } else {
+                    robot1.swipeServo.setPosition(0.925 - gamepad2.left_stick_y);
+                }
             } else {
-                robot1.swipeServo.setPosition(0.925 - gamepad2.left_stick_y);
+                robot1.swipeServo.setPosition(0.525);
             }
+
 
 
 
@@ -200,9 +213,30 @@ public class Meet1TeleOp extends LinearOpMode {
             }
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-
+            telemetry.addData("distnace", threadedDistance);
             telemetry.update();
 
         }
+        sensorThread.interrupt();
+    }
+    private class sensorThread extends Thread {
+        public sensorThread() {
+                this.setName("sensorThread");
+            }
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        threadedDistance = distance.getDistance(DistanceUnit.CM);
+                        idle();
+                    }
+                } //catch (InterruptedException e) {
+                //dab
+                // }
+                catch (Exception e) {
+                    //hi
+                }
+        }
     }
 }
+

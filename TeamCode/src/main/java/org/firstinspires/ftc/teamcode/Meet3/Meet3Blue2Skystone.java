@@ -45,6 +45,10 @@ public class Meet3Blue2Skystone extends LinearOpMode {
         robot1.armthingy.setPosition(0.75);
         robot1.capstonedropper.setPosition(0.5);
 
+
+        robot1.autoPush.setPosition(0.6);
+        robot1.autoArm.setPosition(0);
+
         robot1.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot1.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot1.backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -67,9 +71,9 @@ public class Meet3Blue2Skystone extends LinearOpMode {
         boolean skystone = false;
         waitForStart();
 
-        movemento.forwardMMwithDistance(230, 0.5, 10);
+        movemento.forwardMMwithDistance(250, 0.5, 10);
         //movemento.straightMM(220, 0.5);
-
+        sleep(1000);
         while (skystone == false) {
             double skystonevalue = (sensorColor.red() * sensorColor.green()) / (sensorColor.blue() * sensorColor.blue());
             if (skystonevalue < 2) {
@@ -83,6 +87,7 @@ public class Meet3Blue2Skystone extends LinearOpMode {
                     SkystonePossiblePosition = 2;
                     movemento.strafe(85, 0.5);
                 }  else if (SkystonePossiblePosition == 2) {
+                    movemento.strafe(30, 0.5);
                     SkystonePossiblePosition = 3;
                     SkystonePosition1 = 3;
                     skystone = true;
@@ -91,127 +96,132 @@ public class Meet3Blue2Skystone extends LinearOpMode {
         }
         if (SkystonePosition1 == 1) {
             robot1.capstonedropper.setPosition(0);
-            robot1.grabbythingy.setPosition(0.15);
-            movemento.strafe(170, 0.5);
+            movemento.straightMM(-30, 0.4);
+            robot1.autoArm.setPosition(0.46);
+            movemento.strafe(-30, 0.5);
+            movemento.straightMM(60, 0.5);
+            robot1.autoPush.setPosition(0);
+            sleep(1000);
+            movemento.straightMM(-70, 0.5);
+            robot1.autoArm.setPosition(0.25);
+            movemento.rotate(90, 0.7);
+            movemento.recalibrate(3, 90, 1);
+            movemento.straightMM(150, 1);
+            movemento.wallStrafe(2, -0.3);
+            movemento.strafe(-10, 0.5);
+            movemento.straightMM(150, 0.5);
+            robot1.autoArm.setPosition(0.4);
+            robot1.autoPush.setPosition(0.5);
+            sleep(500);
+            movemento.recalibrate(3, 90, 1);
 
+            movemento.straightMM(-540, 0.5);
+            movemento.strafe(-50, 0.5);
+            movemento.rotate(-90, 0.7);
+            movemento.recalibrate(3, 0, 1);
+
+
+            movemento.straightMM(50, 0.5);
+            robot1.autoPush.setPosition(0);
+            sleep(1000);
+            movemento.straightMM(-40, 0.5);
+            robot1.autoArm.setPosition(0.25);
             movemento.rotate(90, 0.5);
+            movemento.recalibrate(3, 90, 1);
 
-            movemento.strafe(130, 0.5);
-            robot1.Squishy1.setPower(-0.6);
-            robot1.Squishy2.setPower(0.6);
-
-            movemento.straightMM(80, 0.5);
-            robot1.Squishy1.setPower(0);
-            robot1.Squishy2.setPower(0);
-            movemento.strafe(-150, 0.5);
+            movemento.straightMM(470, 1);
 
 
+            robot1.autoArm.setPosition(0.4);
+            robot1.autoPush.setPosition(0.5);
+            sleep(500);
+            movemento.straightMM(-100, 0.5);
+        } else if (SkystonePosition1 == 2) {
+            robot1.capstonedropper.setPosition(0);
+            movemento.straightMM(-30, 0.4);
+            robot1.autoArm.setPosition(0.4);
+            movemento.strafe(-30, 0.5);
+            movemento.straightMM(60, 0.5);
+            robot1.autoPush.setPosition(0);
+            sleep(1000);
+            movemento.straightMM(-70, 0.5);
+            robot1.autoArm.setPosition(0.25);
+            movemento.rotate(90, 0.7);
+            movemento.recalibrate(3, 90, 1);
+            movemento.strafe(50, 0.5);
             movemento.straightMM(400, 1);
-            robot1.Squishy1.setPower(0.6);
-            robot1.Squishy2.setPower(-0.6);
+
+            robot1.autoArm.setPosition(0.4);
+            robot1.autoPush.setPosition(0.5);
+            sleep(500);
+
+            movemento.recalibrate(3, 90, 1);
+
+            movemento.straightMM(-580, 0.5);
+            movemento.strafe(-50, 0.5);
+            movemento.rotate(-90, 0.7);
+            movemento.recalibrate(3, 0, 1);
+
+            movemento.straightMM(90, 0.5);
+            robot1.autoPush.setPosition(0);
+            sleep(1000);
+            movemento.straightMM(-80, 0.5);
+            robot1.autoArm.setPosition(0.25);
+            movemento.rotate(90, 0.5);
+            movemento.recalibrate(3, 90, 1);
+            movemento.strafe(50, 0.5);
+            movemento.straightMM(600, 1);
+
+            robot1.autoArm.setPosition(0.4);
+            robot1.autoPush.setPosition(0.5);
+            sleep(500);
+            movemento.straightMM(-100, 0.5);
+        } else if (SkystonePosition1 == 3) {
+            robot1.capstonedropper.setPosition(0);
+            movemento.straightMM(-30, 0.4);
+            movemento.strafe(7, 0.4);
+            robot1.autoArm.setPosition(0.4);
+            sleep(500);
+            movemento.straightMM(60, 0.5);
+            robot1.autoPush.setPosition(0);
+            sleep(1000);
+            movemento.straightMM(-70, 0.5);
+            robot1.autoArm.setPosition(0.25);
+            movemento.rotate(90, 0.7);
+            movemento.recalibrate(3, 90, 1);
+            movemento.strafe(473, 0.5);
+            movemento.straightMM(400, 1);
+
+            robot1.autoArm.setPosition(0.4);
+            robot1.autoPush.setPosition(0.5);
+            sleep(500);
+
+            movemento.recalibrate(3, 90, 1);
+
+            movemento.straightMM(-550, 0.7);
+            movemento.strafe(-50, 0.5);
+            movemento.rotate(-90, 0.7);
+            movemento.strafe(40, 0.5);
+
+            movemento.straightMM(90, 0.5);
+            robot1.autoPush.setPosition(0);
+            sleep(1000);
+            movemento.straightMM(-80, 0.5);
+            robot1.autoArm.setPosition(0.25);
+            movemento.strafe(-50, 0.5);
+            movemento.rotate(90, 0.5);
+            movemento.recalibrate(3, 90, 1);
+            movemento.strafe(50, 0.5);
+            movemento.straightMM(650, 1);
+
+            robot1.autoArm.setPosition(0.4);
+            robot1.autoPush.setPosition(0.5);
+            sleep(500);
             movemento.straightMM(-100, 1);
 
-        } else if (SkystonePosition1 == 2)  {
-            robot1.capstonedropper.setPosition(0);
-            robot1.grabbythingy.setPosition(0.15);
-            movemento.strafe(-110, 0.5);
-
-            movemento.rotate(-90, 0.5);
-
-            movemento.strafe(-130, 0.5);
-
-            movemento.recalibrate(2, -90, 1);
-
-            robot1.Squishy1.setPower(-1);
-            robot1.Squishy2.setPower(1);
-
-            movemento.straightMM(80, 0.5);
-            robot1.Squishy1.setPower(0);
-            robot1.Squishy2.setPower(0);
-            movemento.strafe(150, 0.5);
-
-
-
-            movemento.straightMM(-400, 1);
-
-            movemento.rotate(90, 0.5);
-            robot1.Squishy1.setPower(0.6);
-            robot1.Squishy2.setPower(-0.6);
-            movemento.straightMM(10, 0.5);
-            movemento.straightMM(-10, 0.5);
-            movemento.rotate(-90, 0.5);
-            movemento.recalibrate(4, -90, 0.5);
-            movemento.straightMM(580, 1);
-            movemento.strafe(-230, 0.5);
-            movemento.recalibrate(2, -90, 0.5);
-            robot1.Squishy1.setPower(-0.6);
-            robot1.Squishy2.setPower(0.6);
-
-            movemento.straightMM(80, 0.5);
-            robot1.Squishy1.setPower(0);
-            robot1.Squishy2.setPower(0);
-            movemento.strafe(160, 0.5);
-            movemento.recalibrate(4, -90, 0.5);
-
-            movemento.straightMM(-550, 1);
-            movemento.rotate(90, 0.5);
-            robot1.Squishy1.setPower(0.6);
-            robot1.Squishy2.setPower(-0.6);
-            movemento.straightMM(10, 0.4);
-            movemento.straightMM(-10, 0.4);
-            movemento.strafe(200, 0.5);
 
         }
-        else if (SkystonePosition1 == 3)  {
-            robot1.capstonedropper.setPosition(0);
-            robot1.grabbythingy.setPosition(0.15);
-            movemento.strafe(-20, 0.5);
 
-            movemento.rotate(-90, 0.5);
-
-            movemento.strafe(-130, 0.5);
-
-            movemento.recalibrate(1, -90, 1);
-
-            robot1.Squishy1.setPower(-1);
-            robot1.Squishy2.setPower(1);
-
-            movemento.straightMM(80, 0.5);
-            robot1.Squishy1.setPower(0);
-            robot1.Squishy2.setPower(0);
-            movemento.strafe(150, 0.5);
-
-
-
-            movemento.straightMM(-400, 1);
-
-            movemento.rotate(90, 0.5);
-            robot1.Squishy1.setPower(0.6);
-            robot1.Squishy2.setPower(-0.6);
-            movemento.straightMM(10, 0.5);
-            movemento.straightMM(-10, 0.5);
-            movemento.rotate(-90, 0.5);
-            movemento.recalibrate(4, -90, 0.5);
-            movemento.straightMM(600, 1);
-            movemento.strafe(-230, 0.5);
-            movemento.recalibrate(2, -90, 0.5);
-            robot1.Squishy1.setPower(-0.6);
-            robot1.Squishy2.setPower(0.6);
-
-            movemento.straightMM(80, 0.5);
-            robot1.Squishy1.setPower(0);
-            robot1.Squishy2.setPower(0);
-            movemento.strafe(180, 0.5);
-            movemento.recalibrate(4, -90, 0.5);
-
-            movemento.straightMM(-650, 1);
-            movemento.rotate(90, 0.5);
-            robot1.Squishy1.setPower(0.6);
-            robot1.Squishy2.setPower(-0.6);
-            movemento.straightMM(10, 0.4);
-            movemento.straightMM(-10, 0.4);
-            movemento.strafe(200, 0.5);
-        }
     }
 
 

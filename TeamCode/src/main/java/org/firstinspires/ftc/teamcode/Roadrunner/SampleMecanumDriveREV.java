@@ -38,14 +38,14 @@ public class SampleMecanumDriveREV extends org.firstinspires.ftc.teamcode.drive.
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
         // TODO: adjust the names of the following hardware devices to match your configuration
-        imu = hardwareMap.get(BNO055IMU.class, "imuGlobal");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
         // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
         // upward (normal to the floor) using a command like the following:
-        org.firstinspires.ftc.teamcode.util.BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, org.firstinspires.ftc.teamcode.util.AxesSigns.NPN);
+        org.firstinspires.ftc.teamcode.util.BNO055IMUUtil.remapAxes(imu, AxesOrder.ZYX, org.firstinspires.ftc.teamcode.util.AxesSigns.NPN);
 
         leftFront = hardwareMap.get(DcMotorEx.class, "left_drive");
         leftRear = hardwareMap.get(DcMotorEx.class, "back_left_drive");
@@ -66,10 +66,10 @@ public class SampleMecanumDriveREV extends org.firstinspires.ftc.teamcode.drive.
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
-        leftFront.setDirection(DcMotor.Direction.FORWARD); // these motors are 435 rpm motors
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
-        leftRear.setDirection(DcMotor.Direction.FORWARD);
-        rightRear.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE); // these motors are 435 rpm motors
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        leftRear.setDirection(DcMotor.Direction.REVERSE);
+        rightRear.setDirection(DcMotor.Direction.FORWARD);
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
     }
@@ -110,11 +110,10 @@ public class SampleMecanumDriveREV extends org.firstinspires.ftc.teamcode.drive.
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(-v);
-        leftRear.setPower(-v1);
-        rightRear.setPower(-v2);
-        rightFront.setPower(-
-                v3);
+        leftFront.setPower(v);
+        leftRear.setPower(v1);
+        rightRear.setPower(v2);
+        rightFront.setPower(v3);
     }
 
     @Override

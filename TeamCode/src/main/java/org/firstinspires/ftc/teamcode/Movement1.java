@@ -14,35 +14,46 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.lang.Math;
 
 public class Movement1 {
-
+    //hardware file includes all data about the motors, servos, etc
     HardWare1 robot1 = new HardWare1();
 
+    //purpose is to route the
+    UselessLinearOpMode useless = new UselessLinearOpMode();
+    //IMU is used to detect angle measures
+    //in our case, we have 2 imu's
+    //imuGlobal is to keep track of the global position, which restarts from the running of each program
     BNO055IMU imuGlobal;
+    //imu is used to turn, but resets every time the function rotate() is run
     BNO055IMU imu;
+
+    //ElapsedTime is to tell the drivers how much time there
     private ElapsedTime runtime     = new ElapsedTime();
+
+    //lastAngles is to find what the last Angles was since the imu only goes through -179 to 180 degrees
     Orientation         lastAngles  = new Orientation();
+
+    //correction from angle and the global angle
     double correction, globalAngle;
+
+    //since hardwaremap is a function that can only be used in an autonomous or teleop code, we had to do a loop and this will equal hardwareMap in the init
     HardwareMap hwMap = null;
+    //same thing for telemetry
     Telemetry telemetry     = null;
 
     /* Constructor */
     public Movement1() {
 
     }
-         /*
-    this function is for going straight. using MM to measure how far you need to go, and just enter it.
-    The power doesn't need to be slow because there is an auto slowdown when close
-    The encoder is only on the leftDrive wheel,because the control hub can't really handle multiple i think
-     */
 
 
-
+    //when running a code, this init function makes it so that everything is initialized
     public void init(HardwareMap bhwMap, Telemetry btelemetry) {
 
+        //the hardwaremap thing only is in a linearopmode (autonomous or teleop), so hwMap and telemetry are now equal
         hwMap = bhwMap;
         telemetry = btelemetry;
 
-        //robot1.init(hardwareMap);
+        //the parameters tells how to customize the imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
 
@@ -51,27 +62,37 @@ public class Movement1 {
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.loggingEnabled = false;
 
-
+        //this is how hardwareMpa pairs up the software object and the hardware object with the device
         imu = hwMap.get(BNO055IMU.class, "imu");
         imuGlobal = hwMap.get(BNO055IMU.class, "imuGlobal");
         //time to init the imu
         imu.initialize(parameters);
         imuGlobal.initialize(parameters);
+
+        //initializes the robot hardware1 file
         robot1.init(bhwMap);
+
+        //sets all the motors in the robot to brake so the movements are more precise
+        //left drive is the front left drive
         robot1.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot1.backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot1.rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot1.backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
+    //recalibrate uses the Global imu to keep track of the angle relative to the starting position
     public void recalibrate(int seconds, int angle, double maxSpeed) {
         ElapsedTime currentTime  = new ElapsedTime();
         currentTime.reset();
         robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double power;
         while ((currentTime.seconds() < seconds) && !(getGlobalAngle() == angle)) {
+            double porportionalseconds = (seconds - currentTime.seconds())/(seconds);
+            if ((seconds/2) > currentTime.seconds()) {
+                porportionalseconds = 0.5;
+            }
             if (((Math.abs(angle - getGlobalAngle()) / 90) * maxSpeed) > 0.1) {
-                power = ((seconds - currentTime.seconds())/(seconds)) * (Math.abs(angle - getGlobalAngle()) / 30) * maxSpeed;
+                power = (porportionalseconds) * (Math.abs(angle - getGlobalAngle()) / 30) * maxSpeed;
             } else {
                 power = 0.1;
             }
@@ -98,6 +119,8 @@ public class Movement1 {
         robot1.backRightDrive.setPower(0);
 
     }
+
+    //the forward distance goes 3/4 of integer MM, then continues moving forward until distance CM with half the distance of power
     public void forwardMMwithDistance(int MM, double power, int CM) {
         resetAngle();
 
@@ -169,6 +192,11 @@ public class Movement1 {
 
     }
 
+      /*
+        this function is for going straight. using MM to measure how far you need to go, and just enter it.
+        The power doesn't need to be slow because there is an auto slowdown when close
+        The encoder is only on the leftDrive wheel,because the control hub can't really handle multiple i think
+        */
     public void straightMM(int MM, double power) {
         resetAngle();
 
@@ -286,73 +314,65 @@ public class Movement1 {
 
     }
 
-    public int forwardMMwithIntake(int MM, double power) {
-        resetAngle();
-        ElapsedTime porportional  = new ElapsedTime();
 
-        double encodercounts = 7.672 * MM;
-
-        //since we are only going forward, I am only using one motor to measure the enocoder
-        //and since there is straightness correction, it should work
-        robot1.encoderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    /*
+    wall straight runs the motors with time, with no feedback to keep in straight
+    only used for ramming into walls
+     */
+    public void wallStraight(int time, double power) {
+        runtime.reset();
 
 
+        if (power > 0) {
 
-        if (encodercounts > 0) {
 
-            robot1.Squishy1.setPower(-0.6);
-            robot1.Squishy2.setPower(0.6);
-            while ((-robot1.encoderMotor.getCurrentPosition() < encodercounts) && !(robot1.IntakeSensor.getDistance(DistanceUnit.CM) < 10)) {
+
+            while (runtime.seconds() < time) {
+
+                robot1.leftDrive.setPower((power));
+                robot1.rightDrive.setPower((power));
+                robot1.backLeftDrive.setPower((power));
+                robot1.backRightDrive.setPower((power));
+
+
+                telemetry.addData("1 imu heading", lastAngles.firstAngle);
+                telemetry.addData("2 global heading", globalAngle);
+                telemetry.addData("3 correction", correction);
+
+                telemetry.addData("5 Encoder Position", -robot1.encoderMotor.getCurrentPosition());
                 robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                correction = checkDirection();
-                double actualPower = correction;
-                robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot1.leftDrive.setPower(-(power - actualPower));
+                telemetry.update();
+            }
 
-                robot1.rightDrive.setPower(-(power + actualPower));
-                robot1.backLeftDrive.setPower(-(power - actualPower));
-                robot1.backRightDrive.setPower(-(power + actualPower));
+
+
+        } else if (power < 0) {
+
+
+
+            while (runtime.seconds() < time) {
+                double actualPower = correction / 2;
+                robot1.leftDrive.setPower(-(power));
+                robot1.rightDrive.setPower(-(power));
+                robot1.backLeftDrive.setPower(-(power));
+                robot1.backRightDrive.setPower(-(power));
 
                 //tell the person some info
                 telemetry.addData("1 imu heading", lastAngles.firstAngle);
                 telemetry.addData("2 global heading", globalAngle);
                 telemetry.addData("3 correction", correction);
-                telemetry.addData("4 actual correction", actualPower);
-                telemetry.addData("5 harris Encoder Position", -robot1.encoderMotor.getCurrentPosition());
-                telemetry.addData("6 power:", power);
-                telemetry.addData("7 distance", robot1.IntakeSensor.getDistance(DistanceUnit.CM));
-                robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                telemetry.addData("5 Encoder Position", -robot1.encoderMotor.getCurrentPosition());
                 telemetry.update();
+                robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
 
-            }
-            porportional.reset();
-            robot1.Squishy1.setPower(0);
-            robot1.Squishy2.setPower(0);
-            robot1.leftDrive.setPower(0);
-            robot1.rightDrive.setPower(0);
-            robot1.backLeftDrive.setPower(0);
-            robot1.backRightDrive.setPower(0);
-            if (robot1.IntakeSensor.getDistance(DistanceUnit.CM) < 10) {
-                while (robot1.IntakeSensor.getDistance(DistanceUnit.CM) < 10) {
-                    robot1.Squishy1.setPower(-0.8);
-                    robot1.Squishy2.setPower(0.8);
-                    if (porportional.seconds() < 1.2) {
-                        double swipePosition = 1 - (porportional.seconds()/3) - 0.075;
-                        robot1.swipeServo.setPosition(swipePosition);
-                    } else {
-                        robot1.swipeServo.setPosition(0.525);
-                    }
-                }
-                robot1.swipeServo.setPosition(0.525);
-            }
 
 
         }
-
-
-
-        int returnMM = (int) (-robot1.encoderMotor.getCurrentPosition() / 7.672);
-        return returnMM;
+        robot1.leftDrive.setPower(0);
+        robot1.rightDrive.setPower(0);
+        robot1.backLeftDrive.setPower(0);
+        robot1.backRightDrive.setPower(0);
 
     }
 
@@ -480,6 +500,45 @@ public class Movement1 {
 
     }
 
+    /*
+      wall strafe runs the motors with time, with no feedback to keep in straight
+    only used for ramming into walls
+     */
+
+    public void wallStrafe(int time, double power) {
+        runtime.reset();
+
+
+
+        //setting the power negative strafes right
+
+            while ((runtime.seconds() < time)) {
+
+                robot1.leftDrive.setPower((power));
+                robot1.rightDrive.setPower(-(power));
+                robot1.backLeftDrive.setPower(-(power));
+                robot1.backRightDrive.setPower((power));
+
+
+                telemetry.addData("1 imu heading", lastAngles.firstAngle);
+                telemetry.addData("2 global heading", globalAngle);
+                telemetry.addData("3 correction", correction);
+
+                telemetry.addData("5 Encoder Position", -robot1.encoderMotor.getCurrentPosition());
+
+                telemetry.update();
+
+        }
+        robot1.leftDrive.setPower(0);
+        robot1.rightDrive.setPower(0);
+        robot1.backLeftDrive.setPower(0);
+        robot1.backRightDrive.setPower(0);
+
+    }
+
+    /*
+    rotate restarts the imu and rotates to the certain degree, but if the degree is passed, there is no turning back or feedback loop
+     */
     public void rotate(int degrees, double power) {
         resetAngle();
         robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -550,14 +609,13 @@ public class Movement1 {
     }
 
 
-
-
+    /*
+   checkdirection makes sure the number is positive
+     */
     public double checkDirection()
     {
-        // The gain value determines how sensitive the correction is to direction changes.
-        // You will have to experiment with your robot to get small smooth direction changes
-        // to stay on a straight line.
-        double correction, angle, gain = .10;
+
+        double correction, angle, gain = .1;
 
         angle = getAngle();
 
@@ -570,12 +628,13 @@ public class Movement1 {
 
         return correction;
     }
+    /*
+    checkdirection is used to find the direction, and the imu has a property of having a range from -179 ti 180 degrees
+    this function allows for it to tally up to 360 degrees
+     */
     public double getAngle()
     {
-        // We experimentally determined the Z axis is the axis we want to use for heading angle.
-        // We have to process the angle because the imu works in euler angles so the Z axis is
-        // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
-        // 180 degrees. We detect this transition and track the total cumulative angle of rotation.
+
 
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
@@ -593,12 +652,12 @@ public class Movement1 {
         return globalAngle;
     }
 
+    /*
+    this is the global angle and to get the global angle and position
+     */
     public double getGlobalAngle()
     {
-        // We experimentally determined the Z axis is the axis we want to use for heading angle.
-        // We have to process the angle because the imu works in euler angles so the Z axis is
-        // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
-        // 180 degrees. We detect this transition and track the total cumulative angle of rotation.
+
 
         Orientation angles = imuGlobal.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
@@ -606,12 +665,16 @@ public class Movement1 {
 
         return angles.firstAngle;
     }
+    /*
+    resets the imu angle for the rotate function
+     */
     public void resetAngle()
     {
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         globalAngle = 0;
     }
+
 
 
 }

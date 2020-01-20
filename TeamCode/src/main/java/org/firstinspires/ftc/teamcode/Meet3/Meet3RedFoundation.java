@@ -28,7 +28,7 @@ public class Meet3RedFoundation extends LinearOpMode {
         robot1.armthingy.setPosition(0.75);
         robot1.capstonedropper.setPosition(0.5);
 
-        robot1.autoPush.setPosition(0.5);
+        robot1.autoPush.setPosition(0.6);
         robot1.autoArm.setPosition(0);
 
         robot1.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -46,18 +46,21 @@ public class Meet3RedFoundation extends LinearOpMode {
 
         waitForStart();
         movemento.rotate(-10, 0.5);
-        movemento.straightMM(-300, 0.5);
+        movemento.straightMM(-280, 0.5);
         robot1.foundationgrabber.setPosition(0.975);
         sleep(1000);
         movemento.straightMM(250, 0.5);
         movemento.rotate(-80, 0.5);
         robot1.foundationgrabber.setPosition(0.3);
         sleep(1000);
-        movemento.straightMM(-100, 0.5);
+        movemento.strafe(100, 0.5);
+        movemento.wallStraight(3, -0.3);
 
-        movemento.strafe(-35, 0.5);
-        movemento.rotate(10, 0.5);
-        movemento.straightMM(300, 0.5);
+        movemento.wallStrafe(4, 0.3);
+        sleep(5000);
+        movemento.strafe(10, 0.5);
+        movemento.straightMM(320, 0.5);
+        movemento.strafe(20 ,0.5);
     }
 
 

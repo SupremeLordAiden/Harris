@@ -10,9 +10,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class HardWare1 {
     /* Public OpMode members. */
     //drivetrain motors
+
+    //front left motor
     public DcMotor leftDrive        = null;
+
+    //front right drive
     public DcMotor rightDrive       = null;
+
+    //back left drive
     public DcMotor backLeftDrive    = null;
+
+    //back right drive
     public DcMotor backRightDrive   = null;
 
     //intake motors
@@ -30,20 +38,35 @@ public class HardWare1 {
 
     //servos
     public Servo swipeServo         = null;
+
+    //the thing that grabs the cube
     public Servo armthingy          = null;
+
+    //the thing that moves the entire thing (chain lift)
     public Servo grabbythingy       = null;
+
+    //foundation grabber
     public Servo foundationgrabber  = null;
+
+    //capstone droper
     public Servo capstonedropper    = null;
 
+    //bigger arm for auto
     public Servo autoPush           = null;
+
+    //the arm for actually grabbing auto
     public Servo autoArm            = null;
+
+    //servo that deploys tape measure
     public CRServo tapeMeasure      = null;
 
     //Linera Slide Touch Sensor
     public DigitalChannel TouchSense   = null;
 
+    //the color sensor
     public DistanceSensor sensorDistance = null;
 
+    //intake sensor relocated onto the linera slide
     public DistanceSensor IntakeSensor  = null;
 
 
@@ -85,12 +108,12 @@ public class HardWare1 {
 
         encoderMotor    = hwMap.get(DcMotor.class, "left_drive");
 
-
+        //tetrix motor 100 rpm direct drive
         LineraSlide = hwMap.get(DcMotor.class, "LineraSlide");
 
 
 
-
+        //touch sensor
         TouchSense = hwMap.get(DigitalChannel.class, "TouchSense");
 
         TouchSense.setMode(DigitalChannel.Mode.INPUT);
@@ -135,7 +158,7 @@ public class HardWare1 {
 
 
         // Define and initialize ALL installed servos.
-        //right now as of 10/21/19, there are no servos and so are being used as test
+
 
         armthingy           = hwMap.get(Servo.class, "armthingy");
         grabbythingy        = hwMap.get(Servo.class, "grabbythingy");

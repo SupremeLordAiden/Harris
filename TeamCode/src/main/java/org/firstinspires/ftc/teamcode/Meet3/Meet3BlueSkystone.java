@@ -45,6 +45,10 @@ public class Meet3BlueSkystone extends LinearOpMode {
         robot1.armthingy.setPosition(0.75);
         robot1.capstonedropper.setPosition(0.5);
 
+
+        robot1.autoPush.setPosition(0.6);
+        robot1.autoArm.setPosition(0);
+
         robot1.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot1.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot1.backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -67,9 +71,9 @@ public class Meet3BlueSkystone extends LinearOpMode {
         boolean skystone = false;
         waitForStart();
 
-        movemento.forwardMMwithDistance(230, 0.5, 10);
+        movemento.forwardMMwithDistance(250, 0.5, 10);
         //movemento.straightMM(220, 0.5);
-
+        sleep(1000);
         while (skystone == false) {
             double skystonevalue = (sensorColor.red() * sensorColor.green()) / (sensorColor.blue() * sensorColor.blue());
             if (skystonevalue < 2) {
@@ -90,171 +94,119 @@ public class Meet3BlueSkystone extends LinearOpMode {
         }
         if (SkystonePosition1 == 1) {
             robot1.capstonedropper.setPosition(0);
-            robot1.grabbythingy.setPosition(0.15);
-            movemento.strafe(170, 0.5);
-
-            movemento.rotate(90, 0.5);
-
-            movemento.strafe(130, 0.5);
-            robot1.Squishy1.setPower(-0.6);
-            robot1.Squishy2.setPower(0.6);
-
-            movemento.straightMM(100, 0.5);
-            movemento.strafe(-150, 0.5);
-
-
+            movemento.straightMM(-30, 0.4);
+            robot1.autoArm.setPosition(0.46);
+            movemento.strafe(-30, 0.5);
+            movemento.straightMM(60, 0.5);
+            robot1.autoPush.setPosition(0);
+            sleep(1000);
+            movemento.straightMM(-70, 0.5);
+            robot1.autoArm.setPosition(0.25);
+            movemento.rotate(90, 0.7);
+            movemento.recalibrate(3, 90, 1);
             movemento.straightMM(500, 1);
-            robot1.swipeServo.setPosition(0.525);
-            robot1.grabbythingy.setPosition(0.8);
-            movemento.rotate(100, 0.5);
-            movemento.straightMM(-100, 0.4);
-
-            robot1.foundationgrabber.setPosition(0.95);
-            sleep(1000);
-            robot1.armthingy.setPosition(0.6);
-
-            robot1.Squishy1.setPower(0);
-            robot1.Squishy2.setPower(0);
-
-            movemento.straightMM(250, 0.5);
-            while (robot1.LineraSlide.getCurrentPosition() < 4000) {
-                robot1.LineraSlide.setPower(1);
-                telemetry.addLine("vrooom vroooom");
-                telemetry.update();
-            }
-
-            robot1.grabbythingy.setPosition(0.15);
-            robot1.LineraSlide.setPower(0);
+            movemento.rotate(-80, 0.5);
+            movemento.recalibrate(1, 10, 1);
+            movemento.straightMM(90, 0.5);
+            robot1.autoArm.setPosition(0.4);
+            robot1.autoPush.setPosition(0.5);
             sleep(500);
+
+            robot1.autoPush.setPosition(0.6);
+            robot1.autoArm.setPosition(0);
+            movemento.straightMM(-50, 0.5);
+            movemento.rotate(-170, 0.5);
+            movemento.straightMM(-100, 0.5);
+            robot1.foundationgrabber.setPosition(0.975);
+            sleep(1500);
+            movemento.straightMM(230, 0.5);
             movemento.rotate(80, 0.5);
             robot1.foundationgrabber.setPosition(0.3);
-
             sleep(1000);
-            movemento.strafe(-100, 0.5);
             movemento.straightMM(-50, 0.5);
 
-            while (robot1.LineraSlide.getCurrentPosition() > 200) {
-                robot1.LineraSlide.setPower(-0.4);
-                telemetry.addLine("nani");
-                telemetry.update();
-            }
-            robot1.armthingy.setPosition(0.75);
-            robot1.grabbythingy.setPosition(0.8);
-            robot1.LineraSlide.setPower(0);
+            movemento.strafe(-70, 1);
 
-            movemento.straightMM(250, 0.5);
-        } else if (SkystonePosition1 == 2)  {
+            movemento.straightMM(300, 1);
+
+        } else if (SkystonePosition1 == 2) {
             robot1.capstonedropper.setPosition(0);
-            robot1.grabbythingy.setPosition(0.15);
-            movemento.strafe(180, 0.5);
-
-            movemento.rotate(90, 0.5);
-
-            movemento.strafe(130, 0.5);
-            robot1.Squishy1.setPower(-0.6);
-            robot1.Squishy2.setPower(0.6);
-
-            movemento.straightMM(100, 0.5);
-            movemento.strafe(-150, 0.5);
-
-
-            movemento.straightMM(600, 1);
-            robot1.swipeServo.setPosition(0.525);
-            robot1.grabbythingy.setPosition(0.8);
-            movemento.rotate(100, 0.5);
-            movemento.straightMM(-100, 0.4);
-
-            robot1.foundationgrabber.setPosition(0.95);
+            movemento.straightMM(-30, 0.4);
+            robot1.autoArm.setPosition(0.4);
+            movemento.strafe(-30, 0.5);
+            movemento.straightMM(60, 0.5);
+            robot1.autoPush.setPosition(0);
             sleep(1000);
-            robot1.armthingy.setPosition(0.6);
-
-            robot1.Squishy1.setPower(0);
-            robot1.Squishy2.setPower(0);
-
-            movemento.straightMM(250, 0.5);
-            while (robot1.LineraSlide.getCurrentPosition() < 4000) {
-                robot1.LineraSlide.setPower(1);
-                telemetry.addLine("vrooom vroooom");
-                telemetry.update();
-            }
-
-            robot1.grabbythingy.setPosition(0.15);
-            robot1.LineraSlide.setPower(0);
+            movemento.straightMM(-60, 0.5);
+            robot1.autoArm.setPosition(0.25);
+            movemento.rotate(90, 0.7);
+            movemento.recalibrate(3, 90, 1);
+            movemento.straightMM(555, 1);
+            movemento.rotate(-80, 0.5);
+            movemento.recalibrate(1, 10, 1);
+            movemento.straightMM(110, 0.5);
+            robot1.autoArm.setPosition(0.4);
+            robot1.autoPush.setPosition(0.5);
             sleep(500);
+
+            robot1.autoPush.setPosition(0.6);
+            robot1.autoArm.setPosition(0);
+            movemento.straightMM(-50, 0.5);
+            movemento.rotate(-170, 0.5);
+            movemento.straightMM(-100, 0.5);
+            robot1.foundationgrabber.setPosition(0.975);
+            sleep(1500);
+            movemento.straightMM(230, 0.5);
             movemento.rotate(80, 0.5);
             robot1.foundationgrabber.setPosition(0.3);
-
             sleep(1000);
-            movemento.strafe(-100, 0.5);
             movemento.straightMM(-50, 0.5);
 
-            while (robot1.LineraSlide.getCurrentPosition() > 200) {
-                robot1.LineraSlide.setPower(-0.4);
-                telemetry.addLine("nani");
-                telemetry.update();
-            }
-            robot1.armthingy.setPosition(0.75);
-            robot1.grabbythingy.setPosition(0.8);
-            robot1.LineraSlide.setPower(0);
+            movemento.strafe(-100, 1);
 
-            movemento.straightMM(250, 0.5);
-        }
-        else if (SkystonePosition1 == 3)  {
+            movemento.straightMM(300, 1);
+
+
+        } else if (SkystonePosition1 == 3) {
             robot1.capstonedropper.setPosition(0);
-            robot1.grabbythingy.setPosition(0.15);
-            movemento.strafe(180, 0.5);
-
-            movemento.rotate(90, 0.5);
-
-            movemento.strafe(130, 0.5);
-            robot1.Squishy1.setPower(-0.6);
-            robot1.Squishy2.setPower(0.6);
-
-            movemento.straightMM(100, 0.5);
-            movemento.strafe(-150, 0.5);
-
-
-            movemento.straightMM(700, 1);
-            robot1.swipeServo.setPosition(0.525);
-            robot1.grabbythingy.setPosition(0.8);
-            movemento.rotate(100, 0.5);
-            movemento.straightMM(-100, 0.4);
-
-            robot1.foundationgrabber.setPosition(0.95);
+            movemento.straightMM(-30, 0.4);
+            robot1.autoArm.setPosition(0.4);
+            movemento.strafe(-60, 0.5);
+            movemento.straightMM(60, 0.5);
+            robot1.autoPush.setPosition(0);
             sleep(1000);
-            robot1.armthingy.setPosition(0.6);
-
-            robot1.Squishy1.setPower(0);
-            robot1.Squishy2.setPower(0);
-
-            movemento.straightMM(250, 0.5);
-            while (robot1.LineraSlide.getCurrentPosition() < 4000) {
-                robot1.LineraSlide.setPower(1);
-                telemetry.addLine("vrooom vroooom");
-                telemetry.update();
-            }
-
-            robot1.grabbythingy.setPosition(0.15);
-            robot1.LineraSlide.setPower(0);
+            movemento.straightMM(-60, 0.5);
+            robot1.autoArm.setPosition(0.25);
+            movemento.rotate(90, 0.7);
+            movemento.recalibrate(3, 90, 1);
+            movemento.straightMM(625, 1);
+            movemento.rotate(-80, 0.5);
+            movemento.recalibrate(1, 10, 1);
+            movemento.straightMM(110, 0.5);
+            robot1.autoArm.setPosition(0.4);
+            robot1.autoPush.setPosition(0.5);
             sleep(500);
+
+            robot1.autoPush.setPosition(0.6);
+            robot1.autoArm.setPosition(0);
+            movemento.straightMM(-50, 0.5);
+            movemento.rotate(-170, 0.5);
+            movemento.straightMM(-100, 0.5);
+            robot1.foundationgrabber.setPosition(0.975);
+            sleep(1500);
+            movemento.straightMM(230, 0.5);
             movemento.rotate(80, 0.5);
             robot1.foundationgrabber.setPosition(0.3);
-
             sleep(1000);
-            movemento.strafe(-100, 0.5);
             movemento.straightMM(-50, 0.5);
 
-            while (robot1.LineraSlide.getCurrentPosition() > 200) {
-                robot1.LineraSlide.setPower(-0.4);
-                telemetry.addLine("nani");
-                telemetry.update();
-            }
-            robot1.armthingy.setPosition(0.75);
-            robot1.grabbythingy.setPosition(0.8);
-            robot1.LineraSlide.setPower(0);
+            movemento.strafe(-100, 1);
 
-            movemento.straightMM(250, 0.5);
+            movemento.straightMM(300, 1);
+
+
         }
+
     }
 
 
