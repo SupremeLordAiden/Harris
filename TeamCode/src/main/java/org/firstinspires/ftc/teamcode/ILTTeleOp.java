@@ -18,9 +18,16 @@ public class ILTTeleOp extends LinearOpMode {
 
     HardWare1 robot1 = new HardWare1();
     private ElapsedTime runtime  = new ElapsedTime();
-    double threadedDistance = 0;
+
+    double threadedDistance         = 0;
+    double rightThreadedDistance    = 0;
+    double leftThreadedDistance     = 0;
 
     private DistanceSensor distance;
+
+    private DistanceSensor distanceRight;
+
+    private DistanceSensor distanceLeft;
     @Override
     public void runOpMode() {
         //Tell driver the robot is ready
@@ -32,7 +39,11 @@ public class ILTTeleOp extends LinearOpMode {
         robot1.rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot1.backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot1.backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        distance = hardwareMap.get(DistanceSensor.class, "distance");
+
+        distance        = hardwareMap.get(DistanceSensor.class, "distance");
+        distanceRight   = hardwareMap.get(DistanceSensor.class, "distanceright");
+        distanceLeft    = hardwareMap.get(DistanceSensor.class, "distanceleft");
+
         robot1.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         robot1.backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         robot1.rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -48,6 +59,8 @@ public class ILTTeleOp extends LinearOpMode {
 
         robot1.autoPush.setPosition(0.8);
         robot1.autoArm.setPosition(0);
+
+        robot1.rgb.setPosition(0.79);
 
         Thread sensorThread = new sensorThread();
         waitForStart();
@@ -112,7 +125,7 @@ public class ILTTeleOp extends LinearOpMode {
             if (gamepad2.dpad_down) {
                 robot1.armthingy.setPosition(0.63);
             } else if (gamepad2.dpad_up) {
-                if (threadedDistance > 5 && isChainOutside == true) {
+                if ((threadedDistance > 5) || (isChainOutside == true)) {
                     robot1.armthingy.setPosition(0.75);
                 }
             }
@@ -145,7 +158,6 @@ public class ILTTeleOp extends LinearOpMode {
 
 
 
-            double servoPositionRacPinion = -gamepad2.left_stick_y;
 
             // Show the elapsed game time and wheel power.
 
@@ -212,8 +224,32 @@ public class ILTTeleOp extends LinearOpMode {
                 robot1.tapeMeasure.setPower(0);
             }
 
+            if (threadedDistance < 5) {
+                //rainbow
+                robot1.rgb.setPosition(0.28);
+
+            } else {
+                if ((rightThreadedDistance != 819) || (leftThreadedDistance != 819)) {
+                    //leds
+                    if ((rightThreadedDistance < 50) && (rightThreadedDistance > 25) && (leftThreadedDistance < 50) && (leftThreadedDistance > 25)) {
+                        //green
+                        robot1.rgb.setPosition(0.89);
+                    } else if ((rightThreadedDistance < 25) || (leftThreadedDistance < 25)) {
+                        //red
+                        robot1.rgb.setPosition(0.81);
+                    } else if ((rightThreadedDistance > 50) || (leftThreadedDistance > 50)) {
+                        //blue
+                        robot1.rgb.setPosition(0.92);
+                    }
+                } else if ((rightThreadedDistance == 819) && (leftThreadedDistance == 819)) {
+                    //green
+                    robot1.rgb.setPosition(0.89);
+                }
+            }
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("distnace", threadedDistance);
+            telemetry.addData("distance", threadedDistance);
+            telemetry.addData("right Distance", rightThreadedDistance);
+            telemetry.addData("left Distance", leftThreadedDistance);
             telemetry.update();
 
         }
@@ -227,7 +263,9 @@ public class ILTTeleOp extends LinearOpMode {
             public void run() {
                 try {
                     while (!isInterrupted()) {
-                        threadedDistance = distance.getDistance(DistanceUnit.CM);
+                        threadedDistance        = distance.getDistance(DistanceUnit.CM);
+                        leftThreadedDistance    = distanceLeft.getDistance(DistanceUnit.CM);
+                        rightThreadedDistance   = distanceRight.getDistance(DistanceUnit.CM);
                         idle();
                     }
                 } //catch (InterruptedException e) {

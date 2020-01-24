@@ -21,7 +21,7 @@ public class Meet3RedFoundation extends LinearOpMode {
 
         // you know that hardware file, here it is being called
         robot1.init(hardwareMap);
-        movemento.init(hardwareMap, telemetry);
+        movemento.init(hardwareMap, telemetry, this);
         robot1.foundationgrabber.setPosition(0.3);
         robot1.swipeServo.setPosition(0.3);
         robot1.grabbythingy.setPosition(0.8);

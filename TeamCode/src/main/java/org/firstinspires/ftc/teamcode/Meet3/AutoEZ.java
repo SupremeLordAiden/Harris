@@ -33,7 +33,7 @@ public class AutoEZ extends LinearOpMode {
 
         // you know that hardware file, here it is being called
         robot1.init(hardwareMap);
-        movemento.init(hardwareMap, telemetry);
+        movemento.init(hardwareMap, telemetry, this);
 
         // get a reference to the color sensor.
         sensorColor = hardwareMap.get(ColorSensor.class, "color");

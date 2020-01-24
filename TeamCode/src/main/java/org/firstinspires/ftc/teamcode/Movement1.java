@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import java.util.Locale;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -18,7 +19,7 @@ public class Movement1 {
     HardWare1 robot1 = new HardWare1();
 
     //purpose is to route the
-    UselessLinearOpMode useless = new UselessLinearOpMode();
+    LinearOpMode useless;
     //IMU is used to detect angle measures
     //in our case, we have 2 imu's
     //imuGlobal is to keep track of the global position, which restarts from the running of each program
@@ -47,12 +48,12 @@ public class Movement1 {
 
 
     //when running a code, this init function makes it so that everything is initialized
-    public void init(HardwareMap bhwMap, Telemetry btelemetry) {
+    public void init(HardwareMap bhwMap, Telemetry btelemetry, LinearOpMode opMode) {
 
         //the hardwaremap thing only is in a linearopmode (autonomous or teleop), so hwMap and telemetry are now equal
         hwMap = bhwMap;
         telemetry = btelemetry;
-
+        useless = opMode;
         //the parameters tells how to customize the imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
@@ -86,7 +87,7 @@ public class Movement1 {
         currentTime.reset();
         robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double power;
-        while ((currentTime.seconds() < seconds) && !(getGlobalAngle() == angle)) {
+        while ((currentTime.seconds() < seconds) && !(getGlobalAngle() == angle) && (useless.opModeIsActive())) {
             double porportionalseconds = (seconds - currentTime.seconds())/(seconds);
             if ((seconds/2) > currentTime.seconds()) {
                 porportionalseconds = 0.5;
@@ -136,7 +137,7 @@ public class Movement1 {
             //meaning if you are going forward
             double closeenough = encodercounts * 3/4;
 
-            while (-robot1.encoderMotor.getCurrentPosition() < closeenough) {
+            while ((-robot1.encoderMotor.getCurrentPosition() < closeenough) && (useless.opModeIsActive())) {
                 robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 correction = checkDirection();
                 double actualPower = correction;
@@ -159,7 +160,7 @@ public class Movement1 {
 
             }
 
-            while ((-robot1.encoderMotor.getCurrentPosition() < encodercounts) && (!(robot1.sensorDistance.getDistance(DistanceUnit.CM) < CM))) {
+            while ((-robot1.encoderMotor.getCurrentPosition() < encodercounts) && (!(robot1.sensorDistance.getDistance(DistanceUnit.CM) < CM)) && (useless.opModeIsActive())) {
                 correction = checkDirection();
 
                 //this makes the correction power less strong so everything including imu/gyro can actually react
@@ -212,7 +213,7 @@ public class Movement1 {
 
             double closeenough = encodercounts * 4/5;
 
-            while (-robot1.encoderMotor.getCurrentPosition() > closeenough) {
+            while ((-robot1.encoderMotor.getCurrentPosition() > closeenough) && (useless.opModeIsActive())) {
                 correction = checkDirection();
                 double actualPower = correction * 3/4;
                 robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -231,7 +232,7 @@ public class Movement1 {
                 telemetry.update();
             }
 
-            while (-robot1.encoderMotor.getCurrentPosition() > encodercounts && closeenough > -robot1.leftDrive.getCurrentPosition()) {
+            while ((-robot1.encoderMotor.getCurrentPosition() > encodercounts) && (closeenough > -robot1.leftDrive.getCurrentPosition()) && (useless.opModeIsActive())) {
                 correction = checkDirection();
                 robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 //this makes the correction power less strong so everything including imu/gyro can actually react
@@ -259,7 +260,7 @@ public class Movement1 {
             //meaning if you are going forward
             double closeenough = encodercounts * 4/5;
 
-            while (-robot1.encoderMotor.getCurrentPosition() < closeenough) {
+            while ((-robot1.encoderMotor.getCurrentPosition() < closeenough) && (useless.opModeIsActive())) {
                 robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 correction = checkDirection();
                 double actualPower = correction;
@@ -282,7 +283,7 @@ public class Movement1 {
 
             }
 
-            while (-robot1.encoderMotor.getCurrentPosition() < encodercounts && closeenough < -robot1.encoderMotor.getCurrentPosition()) {
+            while ((-robot1.encoderMotor.getCurrentPosition() < encodercounts) && (closeenough < -robot1.encoderMotor.getCurrentPosition()) && (useless.opModeIsActive())) {
                 correction = checkDirection();
 
                 //this makes the correction power less strong so everything including imu/gyro can actually react
@@ -327,7 +328,7 @@ public class Movement1 {
 
 
 
-            while (runtime.seconds() < time) {
+            while ((runtime.seconds() < time) && (useless.opModeIsActive())) {
 
                 robot1.leftDrive.setPower((power));
                 robot1.rightDrive.setPower((power));
@@ -350,7 +351,7 @@ public class Movement1 {
 
 
 
-            while (runtime.seconds() < time) {
+            while ((runtime.seconds() < time) && (useless.opModeIsActive())) {
                 double actualPower = correction / 2;
                 robot1.leftDrive.setPower(-(power));
                 robot1.rightDrive.setPower(-(power));
@@ -398,7 +399,7 @@ public class Movement1 {
 
             double closeenough = encodercounts * 4/5;
 
-            while (-robot1.encoderMotor.getCurrentPosition() < closeenough) {
+            while ((-robot1.encoderMotor.getCurrentPosition() < closeenough) && (useless.opModeIsActive())) {
                 robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 correction = checkDirection();
                 double actualPower = correction / 3;
@@ -418,7 +419,7 @@ public class Movement1 {
                 telemetry.update();
             }
 
-            while (-robot1.encoderMotor.getCurrentPosition() < encodercounts && closeenough < -robot1.encoderMotor.getCurrentPosition()) {
+            while ((-robot1.encoderMotor.getCurrentPosition() < encodercounts) && (closeenough < -robot1.encoderMotor.getCurrentPosition()) && (useless.opModeIsActive())) {
                 robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 correction = checkDirection();
 
@@ -448,7 +449,7 @@ public class Movement1 {
             //meaning if you are going forward
             double closeenough = encodercounts * 4/5;
 
-            while (-robot1.encoderMotor.getCurrentPosition() > closeenough) {
+            while ((-robot1.encoderMotor.getCurrentPosition() > closeenough) && (useless.opModeIsActive())) {
                 robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 correction = checkDirection();
                 double actualPower = correction / 2;
@@ -467,7 +468,7 @@ public class Movement1 {
                 robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
-            while (-robot1.encoderMotor.getCurrentPosition() < encodercounts && closeenough < robot1.encoderMotor.getCurrentPosition()) {
+            while ((-robot1.encoderMotor.getCurrentPosition() < encodercounts) && (closeenough < robot1.encoderMotor.getCurrentPosition()) && (useless.opModeIsActive())) {
                 correction = checkDirection();
 
                 //this makes the correction power less strong so everything including imu/gyro can actually react
@@ -512,7 +513,7 @@ public class Movement1 {
 
         //setting the power negative strafes right
 
-            while ((runtime.seconds() < time)) {
+            while ((runtime.seconds() < time) && (useless.opModeIsActive())) {
 
                 robot1.leftDrive.setPower((power));
                 robot1.rightDrive.setPower(-(power));
@@ -560,16 +561,16 @@ public class Movement1 {
         if (degrees < 0)
         {
             // On right turn we have to get off zero first.
-            while (getAngle() == 0) {
+            while ((getAngle() == 0) && (useless.opModeIsActive())) {
                 telemetry.addData("turning", getAngle());
                 telemetry.update();
             }
             double howcloseshouldIbe = degrees * 4 / 5;
-            while (getAngle() > howcloseshouldIbe) {
+            while ((getAngle() > howcloseshouldIbe) && (useless.opModeIsActive()))  {
                 telemetry.addData("turning right", getAngle());
                 telemetry.update();
             }
-            while(getAngle() < howcloseshouldIbe && degrees < getAngle()) {
+            while((getAngle() < howcloseshouldIbe) && (degrees < getAngle()) && (useless.opModeIsActive())) {
 
                 double powerwhenclose = power/2;
 
@@ -584,11 +585,11 @@ public class Movement1 {
         } else {    // left turn.
             double howcloseshouldIbe = degrees * 4 / 5;
 
-            while (getAngle() < howcloseshouldIbe) {
+            while ((getAngle() < howcloseshouldIbe) && (useless.opModeIsActive())) {
                 telemetry.addData("turning left", getAngle());
                 telemetry.update();
             }
-            while(getAngle() < degrees && howcloseshouldIbe < getAngle()) {
+            while((getAngle() < degrees) && (howcloseshouldIbe < getAngle()) && (useless.opModeIsActive())) {
 
                 double powerwhenclose = power/2;
 

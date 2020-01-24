@@ -4,7 +4,9 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class HardWare1 {
@@ -56,6 +58,8 @@ public class HardWare1 {
 
     //the arm for actually grabbing auto
     public Servo autoArm            = null;
+
+    public ServoImplEx rgb                = null;
 
     //servo that deploys tape measure
     public CRServo tapeMeasure      = null;
@@ -170,5 +174,10 @@ public class HardWare1 {
         autoArm             = hwMap.get(Servo.class, "autoarm");
         autoPush            = hwMap.get(Servo.class, "autopush");
         tapeMeasure         = hwMap.get(CRServo.class, "tapeMeasure");
+
+        rgb                 = hwMap.get(ServoImplEx.class, "rgb");
+        PwmControl.PwmRange range = new PwmControl.PwmRange(995, 1995);
+        rgb.setPwmRange(range);
+
     }
 }
