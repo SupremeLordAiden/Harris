@@ -92,10 +92,10 @@ public class Movement1 {
             if ((seconds/2) > currentTime.seconds()) {
                 porportionalseconds = 0.5;
             }
-            if (((Math.abs(angle - getGlobalAngle()) / 90) * maxSpeed) > 0.1) {
+            if (((Math.abs(angle - getGlobalAngle()) / 90) * maxSpeed) > 0.14) {
                 power = (porportionalseconds) * (Math.abs(angle - getGlobalAngle()) / 30) * maxSpeed;
             } else {
-                power = 0.1;
+                power = 0.14;
             }
             if (getGlobalAngle() > angle) {
 

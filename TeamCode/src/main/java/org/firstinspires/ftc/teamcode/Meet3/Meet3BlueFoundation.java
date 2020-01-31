@@ -25,8 +25,11 @@ public class Meet3BlueFoundation extends LinearOpMode {
         robot1.foundationgrabber.setPosition(0.3);
         robot1.swipeServo.setPosition(0.3);
         robot1.grabbythingy.setPosition(0.8);
-        robot1.armthingy.setPosition(0.75);
+        robot1.armthingy.setPosition(0.76);
         robot1.capstonedropper.setPosition(0.5);
+
+        robot1.autoPush2.setPosition(1);
+        robot1.autoArm2.setPosition(1);
 
         robot1.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot1.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -40,9 +43,10 @@ public class Meet3BlueFoundation extends LinearOpMode {
 
         //are you really that excited to start? calm calm down
 
-
+        robot1.rgb.setPosition(0.92);
         waitForStart();
         movemento.rotate(10, 0.5);
+        robot1.capstonedropper.setPosition(0);
         movemento.straightMM(-280, 0.8);
         robot1.foundationgrabber.setPosition(0.975);
         sleep(1000);

@@ -40,8 +40,11 @@ public class HarrisTestingAuto extends LinearOpMode {
         robot1.foundationgrabber.setPosition(0.3);
         robot1.swipeServo.setPosition(0.925);
         robot1.grabbythingy.setPosition(0.8);
-        robot1.armthingy.setPosition(0.75);
+        robot1.armthingy.setPosition(0.76);
         robot1.capstonedropper.setPosition(0.5);
+
+        robot1.autoPush2.setPosition(1);
+        robot1.autoArm2.setPosition(1);
 
         robot1.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot1.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

@@ -1,14 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.Range;
+
 
 @TeleOp(name="ILTTeleOp", group="Linear Opmode")
 
@@ -64,6 +62,8 @@ public class ILTTeleOp extends LinearOpMode {
 
         Thread sensorThread = new sensorThread();
         waitForStart();
+        robot1.autoPush2.setPosition(1);
+        robot1.autoArm2.setPosition(1);
 
 
 
@@ -98,37 +98,38 @@ public class ILTTeleOp extends LinearOpMode {
                 motorSpeed  = 1;
             }
 
-            /*if (gamepad1.b == true) {
-                squishySpeed = 0.5;
-            } else if (gamepad1.y == true || gamepad1.a == true) {
-                squishySpeed  = 0;
-            } else if (gamepad1.x == true) {
-                squishySpeed = -0.5;
-            }
-            */
+
 
             squishySpeed = gamepad2.left_trigger - gamepad2.right_trigger;
 
             robot1.Squishy1.setPower(squishySpeed);
             robot1.Squishy2.setPower(-squishySpeed);
 
-            if (gamepad2.dpad_left == true) {
+
+            if (gamepad2.dpad_left) {
                 robot1.grabbythingy.setPosition(0.80);
                 isChainOutside = false;
-            } else if (gamepad2.dpad_right == true) {
+            } else if (gamepad2.dpad_right) {
 
                 robot1.grabbythingy.setPosition(0.15);
                 isChainOutside = true;
 
+            } else if (gamepad2.left_stick_button) {
+                robot1.grabbythingy.setPosition(0.05);
+                isChainOutside = true;
             }
 
             if (gamepad2.dpad_down) {
                 robot1.armthingy.setPosition(0.63);
             } else if (gamepad2.dpad_up) {
-                if ((threadedDistance > 5) || (isChainOutside == true)) {
+                if ((threadedDistance > 5) || (isChainOutside)) {
                     robot1.armthingy.setPosition(0.75);
                 }
             }
+
+
+
+
 
             //this control allows for the left joystick to control direction fully positionally
 
@@ -159,8 +160,9 @@ public class ILTTeleOp extends LinearOpMode {
 
 
 
-            // Show the elapsed game time and wheel power.
 
+
+            /*touch sensor */
             if (robot1.TouchSense.getState() == true) {
                 telemetry.addData("Digital Touch", "Is Not Pressed");
 
@@ -170,6 +172,11 @@ public class ILTTeleOp extends LinearOpMode {
                 robot1.LineraSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODERS);
 
             }
+
+
+
+
+            /*Linear Slide Speed Control*/
             if (gamepad2.y == true) {
                 if (robot1.LineraSlide.getCurrentPosition() < 6000) {
                     LineraSpeed = 1;
@@ -190,10 +197,16 @@ public class ILTTeleOp extends LinearOpMode {
             } else {
                 LineraSpeed = 0;
             }
+            robot1.LineraSlide.setPower(LineraSpeed);
+
+
+
+
+            /*capstone dropper*/
             robot1.capstonedropper.setPosition(gamepad2.right_stick_y);
 
 
-            robot1.LineraSlide.setPower(LineraSpeed);
+
 
             if (gamepad1.left_stick_button == true) {
                 robot1.foundationgrabber.setPosition(0.95);
@@ -226,10 +239,10 @@ public class ILTTeleOp extends LinearOpMode {
 
             if (threadedDistance < 5) {
                 //rainbow
-                robot1.rgb.setPosition(0.28);
+                robot1.rgb.setPosition(0.16);
 
             } else {
-                if ((rightThreadedDistance != 819) || (leftThreadedDistance != 819)) {
+                if ((rightThreadedDistance < 818) || (leftThreadedDistance < 818)) {
                     //leds
                     if ((rightThreadedDistance < 50) && (rightThreadedDistance > 25) && (leftThreadedDistance < 50) && (leftThreadedDistance > 25)) {
                         //green
@@ -250,6 +263,7 @@ public class ILTTeleOp extends LinearOpMode {
             telemetry.addData("distance", threadedDistance);
             telemetry.addData("right Distance", rightThreadedDistance);
             telemetry.addData("left Distance", leftThreadedDistance);
+            telemetry.addData("grabbythingy", robot1.grabbythingy.getPosition());
             telemetry.update();
 
         }

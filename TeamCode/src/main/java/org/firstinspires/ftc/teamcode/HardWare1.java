@@ -59,6 +59,13 @@ public class HardWare1 {
     //the arm for actually grabbing auto
     public Servo autoArm            = null;
 
+
+    //bigger arm for auto left
+    public Servo autoPush2          = null;
+
+    //the arm for actually grabbing auto left
+    public Servo autoArm2           = null;
+
     public ServoImplEx rgb                = null;
 
     //servo that deploys tape measure
@@ -174,6 +181,9 @@ public class HardWare1 {
         autoArm             = hwMap.get(Servo.class, "autoarm");
         autoPush            = hwMap.get(Servo.class, "autopush");
         tapeMeasure         = hwMap.get(CRServo.class, "tapeMeasure");
+
+        autoArm2            = hwMap.get(Servo.class, "autoarm2");
+        autoPush2           = hwMap.get(Servo.class, "autopush2");
 
         rgb                 = hwMap.get(ServoImplEx.class, "rgb");
         PwmControl.PwmRange range = new PwmControl.PwmRange(995, 1995);

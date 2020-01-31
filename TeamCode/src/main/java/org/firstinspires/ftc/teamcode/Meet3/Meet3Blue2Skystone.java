@@ -42,12 +42,15 @@ public class Meet3Blue2Skystone extends LinearOpMode {
         robot1.foundationgrabber.setPosition(0.3);
         robot1.swipeServo.setPosition(0.925);
         robot1.grabbythingy.setPosition(0.8);
-        robot1.armthingy.setPosition(0.75);
+        robot1.armthingy.setPosition(0.76);
         robot1.capstonedropper.setPosition(0.5);
 
 
         robot1.autoPush.setPosition(0.6);
         robot1.autoArm.setPosition(0);
+
+        robot1.autoPush2.setPosition(1);
+        robot1.autoArm2.setPosition(1);
 
         robot1.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot1.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -69,6 +72,7 @@ public class Meet3Blue2Skystone extends LinearOpMode {
         int SkystonePossiblePosition = 1;
 
         boolean skystone = false;
+        robot1.rgb.setPosition(0.92);
         waitForStart();
 
         movemento.forwardMMwithDistance(250, 0.5, 10);
@@ -141,7 +145,7 @@ public class Meet3Blue2Skystone extends LinearOpMode {
             movemento.straightMM(-30, 0.4);
             robot1.autoArm.setPosition(0.4);
             movemento.strafe(-30, 0.5);
-            movemento.straightMM(60, 0.5);
+            movemento.straightMM(60, 0.3);
             robot1.autoPush.setPosition(0);
             sleep(1000);
             movemento.straightMM(-70, 0.5);
@@ -157,19 +161,19 @@ public class Meet3Blue2Skystone extends LinearOpMode {
 
             movemento.recalibrate(3, 90, 1);
 
-            movemento.straightMM(-580, 0.5);
+            movemento.straightMM(-630, 0.5);
             movemento.strafe(-50, 0.5);
             movemento.rotate(-90, 0.7);
             movemento.recalibrate(3, 0, 1);
 
-            movemento.straightMM(90, 0.5);
+            movemento.straightMM(60, 0.3);
             robot1.autoPush.setPosition(0);
             sleep(1000);
-            movemento.straightMM(-80, 0.5);
+            movemento.straightMM(-40, 0.5);
             robot1.autoArm.setPosition(0.25);
-            movemento.rotate(90, 0.5);
+            movemento.rotate(90, 0.75);
             movemento.recalibrate(3, 90, 1);
-            movemento.strafe(50, 0.5);
+
             movemento.straightMM(600, 1);
 
             robot1.autoArm.setPosition(0.4);
@@ -182,14 +186,14 @@ public class Meet3Blue2Skystone extends LinearOpMode {
             movemento.strafe(7, 0.4);
             robot1.autoArm.setPosition(0.4);
             sleep(500);
-            movemento.straightMM(60, 0.5);
+            movemento.straightMM(60, 0.3);
             robot1.autoPush.setPosition(0);
             sleep(1000);
             movemento.straightMM(-70, 0.5);
             robot1.autoArm.setPosition(0.25);
             movemento.rotate(90, 0.7);
             movemento.recalibrate(3, 90, 1);
-            movemento.strafe(473, 0.5);
+
             movemento.straightMM(400, 1);
 
             robot1.autoArm.setPosition(0.4);
@@ -198,7 +202,7 @@ public class Meet3Blue2Skystone extends LinearOpMode {
 
             movemento.recalibrate(3, 90, 1);
 
-            movemento.straightMM(-550, 0.7);
+            movemento.straightMM(-580, 0.7);
             movemento.strafe(-50, 0.5);
             movemento.rotate(-90, 0.7);
             movemento.strafe(40, 0.5);
@@ -217,7 +221,7 @@ public class Meet3Blue2Skystone extends LinearOpMode {
             robot1.autoArm.setPosition(0.4);
             robot1.autoPush.setPosition(0.5);
             sleep(500);
-            movemento.straightMM(-100, 1);
+            movemento.straightMM(-120, 1);
 
 
         }
