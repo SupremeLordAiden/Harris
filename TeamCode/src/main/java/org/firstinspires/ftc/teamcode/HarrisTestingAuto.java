@@ -54,18 +54,6 @@ public class HarrisTestingAuto extends LinearOpMode {
         telemetry.addLine("oy hya ya");
         telemetry.update();
 
-
-
-        //are you really that excited to start? calm calm down
-        int SkystonePosition1 = 0;
-        //0 is not found
-        //1 is left side
-        //2 is middle
-        //3 is right
-
-        int SkystonePossiblePosition = 1;
-
-        boolean skystone = false;
         waitForStart();
         movemento.recalibrate(10, 90, 0.5);
        movemento.rotate(-90, 0.5);

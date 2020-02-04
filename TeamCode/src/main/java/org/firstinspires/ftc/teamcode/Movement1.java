@@ -198,7 +198,9 @@ public class Movement1 {
         The power doesn't need to be slow because there is an auto slowdown when close
         The encoder is only on the leftDrive wheel,because the control hub can't really handle multiple i think
         */
-    public void straightMM(int MM, double power) {
+
+    //the forward distance goes 3/4 of integer MM, then continues moving forward until distance CM with half the distance of power
+    public void forwardMMwithDistanceLeft(int MM, double power, int CM) {
         resetAngle();
 
         double encodercounts = 7.672 * MM;
@@ -208,57 +210,10 @@ public class Movement1 {
         robot1.encoderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
-        //meaning if you are going backwards
-        if (encodercounts < 0) {
 
-            double closeenough = encodercounts * 4/5;
-
-            while ((-robot1.encoderMotor.getCurrentPosition() > closeenough) && (useless.opModeIsActive())) {
-                correction = checkDirection();
-                double actualPower = correction * 3/4;
-                robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot1.leftDrive.setPower((power + actualPower));
-                robot1.rightDrive.setPower((power - actualPower));
-                robot1.backLeftDrive.setPower((power + actualPower));
-                robot1.backRightDrive.setPower((power - actualPower));
-
-
-                telemetry.addData("1 imu heading", lastAngles.firstAngle);
-                telemetry.addData("2 global heading", globalAngle);
-                telemetry.addData("3 correction", correction);
-                telemetry.addData("4 actual correction", actualPower);
-                telemetry.addData("5 Encoder Position", robot1.leftDrive.getCurrentPosition());
-                robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                telemetry.update();
-            }
-
-            while ((-robot1.encoderMotor.getCurrentPosition() > encodercounts) && (closeenough > -robot1.leftDrive.getCurrentPosition()) && (useless.opModeIsActive())) {
-                correction = checkDirection();
-                robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                //this makes the correction power less strong so everything including imu/gyro can actually react
-                double actualPower = correction * 3/4;
-
-                //since we are really close, speed is needed to be slowed down
-                double reductionspeed = power / 2;
-
-                robot1.leftDrive.setPower((reductionspeed + actualPower));
-                robot1.rightDrive.setPower((reductionspeed - actualPower));
-                robot1.backLeftDrive.setPower((reductionspeed + actualPower));
-                robot1.backRightDrive.setPower((reductionspeed - actualPower));
-
-                //tell the person some info
-                telemetry.addData("1 imu heading", lastAngles.firstAngle);
-                telemetry.addData("2 global heading", globalAngle);
-                telemetry.addData("3 correction", correction);
-                telemetry.addData("4 actual correction", actualPower);
-                telemetry.addData("5 Encoder Position", robot1.leftDrive.getCurrentPosition());
-                robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                telemetry.update();
-            }
-
-        } else if (encodercounts > 0) {
+        if (encodercounts > 0) {
             //meaning if you are going forward
-            double closeenough = encodercounts * 4/5;
+            double closeenough = encodercounts * 3/4;
 
             while ((-robot1.encoderMotor.getCurrentPosition() < closeenough) && (useless.opModeIsActive())) {
                 robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -283,21 +238,21 @@ public class Movement1 {
 
             }
 
-            while ((-robot1.encoderMotor.getCurrentPosition() < encodercounts) && (closeenough < -robot1.encoderMotor.getCurrentPosition()) && (useless.opModeIsActive())) {
+            while ((-robot1.encoderMotor.getCurrentPosition() < encodercounts) && (!(robot1.distanceLeft.getDistance(DistanceUnit.CM) < CM)) && (useless.opModeIsActive())) {
                 correction = checkDirection();
 
                 //this makes the correction power less strong so everything including imu/gyro can actually react
                 double actualPower = correction;
 
                 //since we are really close, speed is needed to be slowed down
-                double reductionspeed = power / 2;
+                double reductionspeed = power / 3;
                 robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 robot1.leftDrive.setPower(-(reductionspeed - actualPower));
                 robot1.rightDrive.setPower(-(reductionspeed + actualPower));
                 robot1.backLeftDrive.setPower(-(reductionspeed - actualPower));
                 robot1.backRightDrive.setPower(-(reductionspeed + actualPower));
 
-
+                telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", robot1.distanceLeft.getDistance(DistanceUnit.CM)));
                 telemetry.addData("1 imu heading", lastAngles.firstAngle);
                 telemetry.addData("2 global heading", globalAngle);
                 telemetry.addData("3 correction", correction);
@@ -313,13 +268,205 @@ public class Movement1 {
         robot1.backLeftDrive.setPower(0);
         robot1.backRightDrive.setPower(0);
 
+
+    }
+
+    //the forward distance goes 3/4 of integer MM, then continues moving forward until distance CM with half the distance of power
+    public void forwardMMwithDistanceRight(int MM, double power, int CM) {
+        resetAngle();
+
+        double encodercounts = 7.672 * MM;
+
+        //since we are only going forward, I am only using one motor to measure the enocoder
+        //and since there is straightness correction, it should work
+        robot1.encoderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+
+        if (encodercounts > 0) {
+            //meaning if you are going forward
+            double closeenough = encodercounts * 3/4;
+
+            while ((-robot1.encoderMotor.getCurrentPosition() < closeenough) && (useless.opModeIsActive())) {
+                robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                correction = checkDirection();
+                double actualPower = correction;
+                robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                robot1.leftDrive.setPower(-(power - actualPower));
+
+                robot1.rightDrive.setPower(-(power + actualPower));
+                robot1.backLeftDrive.setPower(-(power - actualPower));
+                robot1.backRightDrive.setPower(-(power + actualPower));
+
+                //tell the person some info
+                telemetry.addData("1 imu heading", lastAngles.firstAngle);
+                telemetry.addData("2 global heading", globalAngle);
+                telemetry.addData("3 correction", correction);
+                telemetry.addData("4 actual correction", actualPower);
+                telemetry.addData("5 harris Encoder Position", -robot1.encoderMotor.getCurrentPosition());
+                telemetry.addData("6 power:", power);
+                robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                telemetry.update();
+
+            }
+
+            while ((-robot1.encoderMotor.getCurrentPosition() < encodercounts) && (!(robot1.distanceRight.getDistance(DistanceUnit.CM) < CM)) && (useless.opModeIsActive())) {
+                correction = checkDirection();
+
+                //this makes the correction power less strong so everything including imu/gyro can actually react
+                double actualPower = correction;
+
+                //since we are really close, speed is needed to be slowed down
+                double reductionspeed = power / 3;
+                robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                robot1.leftDrive.setPower(-(reductionspeed - actualPower));
+                robot1.rightDrive.setPower(-(reductionspeed + actualPower));
+                robot1.backLeftDrive.setPower(-(reductionspeed - actualPower));
+                robot1.backRightDrive.setPower(-(reductionspeed + actualPower));
+
+                telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", robot1.distanceRight.getDistance(DistanceUnit.CM)));
+                telemetry.addData("1 imu heading", lastAngles.firstAngle);
+                telemetry.addData("2 global heading", globalAngle);
+                telemetry.addData("3 correction", correction);
+                telemetry.addData("4 actual correction", actualPower);
+                telemetry.addData("5 Encoder Position", -robot1.encoderMotor.getCurrentPosition());
+                telemetry.update();
+            }
+
+        }
+
+        robot1.leftDrive.setPower(0);
+        robot1.rightDrive.setPower(0);
+        robot1.backLeftDrive.setPower(0);
+        robot1.backRightDrive.setPower(0);
+
+
     }
 
 
-    /*
-    wall straight runs the motors with time, with no feedback to keep in straight
-    only used for ramming into walls
-     */
+
+public void straightMM(int MM, double power) {
+    resetAngle();
+
+    double encodercounts = 7.672 * MM;
+
+    //since we are only going forward, I am only using one motor to measure the enocoder
+    //and since there is straightness correction, it should work
+    robot1.encoderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+    //meaning if you are going backwards
+    if (encodercounts < 0) {
+
+        double closeenough = encodercounts * 4/5;
+
+        while ((-robot1.encoderMotor.getCurrentPosition() > closeenough) && (useless.opModeIsActive())) {
+            correction = checkDirection();
+            double actualPower = correction * 3/4;
+            robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot1.leftDrive.setPower((power + actualPower));
+            robot1.rightDrive.setPower((power - actualPower));
+            robot1.backLeftDrive.setPower((power + actualPower));
+            robot1.backRightDrive.setPower((power - actualPower));
+
+
+            telemetry.addData("1 imu heading", lastAngles.firstAngle);
+            telemetry.addData("2 global heading", globalAngle);
+            telemetry.addData("3 correction", correction);
+            telemetry.addData("4 actual correction", actualPower);
+            telemetry.addData("5 Encoder Position", robot1.leftDrive.getCurrentPosition());
+            robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            telemetry.update();
+        }
+
+        while ((-robot1.encoderMotor.getCurrentPosition() > encodercounts) && (closeenough > -robot1.leftDrive.getCurrentPosition()) && (useless.opModeIsActive())) {
+            correction = checkDirection();
+            robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            //this makes the correction power less strong so everything including imu/gyro can actually react
+            double actualPower = correction * 3/4;
+
+            //since we are really close, speed is needed to be slowed down
+            double reductionspeed = power / 2;
+
+            robot1.leftDrive.setPower((reductionspeed + actualPower));
+            robot1.rightDrive.setPower((reductionspeed - actualPower));
+            robot1.backLeftDrive.setPower((reductionspeed + actualPower));
+            robot1.backRightDrive.setPower((reductionspeed - actualPower));
+
+            //tell the person some info
+            telemetry.addData("1 imu heading", lastAngles.firstAngle);
+            telemetry.addData("2 global heading", globalAngle);
+            telemetry.addData("3 correction", correction);
+            telemetry.addData("4 actual correction", actualPower);
+            telemetry.addData("5 Encoder Position", robot1.leftDrive.getCurrentPosition());
+            robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            telemetry.update();
+        }
+
+    } else if (encodercounts > 0) {
+        //meaning if you are going forward
+        double closeenough = encodercounts * 4/5;
+
+        while ((-robot1.encoderMotor.getCurrentPosition() < closeenough) && (useless.opModeIsActive())) {
+            robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            correction = checkDirection();
+            double actualPower = correction;
+            robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot1.leftDrive.setPower(-(power - actualPower));
+
+            robot1.rightDrive.setPower(-(power + actualPower));
+            robot1.backLeftDrive.setPower(-(power - actualPower));
+            robot1.backRightDrive.setPower(-(power + actualPower));
+
+            //tell the person some info
+            telemetry.addData("1 imu heading", lastAngles.firstAngle);
+            telemetry.addData("2 global heading", globalAngle);
+            telemetry.addData("3 correction", correction);
+            telemetry.addData("4 actual correction", actualPower);
+            telemetry.addData("5 harris Encoder Position", -robot1.encoderMotor.getCurrentPosition());
+            telemetry.addData("6 power:", power);
+            robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            telemetry.update();
+
+        }
+
+        while ((-robot1.encoderMotor.getCurrentPosition() < encodercounts) && (closeenough < -robot1.encoderMotor.getCurrentPosition()) && (useless.opModeIsActive())) {
+            correction = checkDirection();
+
+            //this makes the correction power less strong so everything including imu/gyro can actually react
+            double actualPower = correction;
+
+            //since we are really close, speed is needed to be slowed down
+            double reductionspeed = power / 2;
+            robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot1.leftDrive.setPower(-(reductionspeed - actualPower));
+            robot1.rightDrive.setPower(-(reductionspeed + actualPower));
+            robot1.backLeftDrive.setPower(-(reductionspeed - actualPower));
+            robot1.backRightDrive.setPower(-(reductionspeed + actualPower));
+
+
+            telemetry.addData("1 imu heading", lastAngles.firstAngle);
+            telemetry.addData("2 global heading", globalAngle);
+            telemetry.addData("3 correction", correction);
+            telemetry.addData("4 actual correction", actualPower);
+            telemetry.addData("5 Encoder Position", -robot1.encoderMotor.getCurrentPosition());
+            telemetry.update();
+        }
+
+    }
+
+    robot1.leftDrive.setPower(0);
+    robot1.rightDrive.setPower(0);
+    robot1.backLeftDrive.setPower(0);
+    robot1.backRightDrive.setPower(0);
+
+}
+
+
+/*
+wall straight runs the motors with time, with no feedback to keep in straight
+only used for ramming into walls
+ */
     public void wallStraight(int time, double power) {
         runtime.reset();
 

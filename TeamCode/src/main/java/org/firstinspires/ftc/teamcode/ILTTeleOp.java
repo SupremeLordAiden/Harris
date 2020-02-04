@@ -21,11 +21,7 @@ public class ILTTeleOp extends LinearOpMode {
     double rightThreadedDistance    = 0;
     double leftThreadedDistance     = 0;
 
-    private DistanceSensor distance;
 
-    private DistanceSensor distanceRight;
-
-    private DistanceSensor distanceLeft;
     @Override
     public void runOpMode() {
         //Tell driver the robot is ready
@@ -38,9 +34,7 @@ public class ILTTeleOp extends LinearOpMode {
         robot1.backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot1.backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        distance        = hardwareMap.get(DistanceSensor.class, "distance");
-        distanceRight   = hardwareMap.get(DistanceSensor.class, "distanceright");
-        distanceLeft    = hardwareMap.get(DistanceSensor.class, "distanceleft");
+
 
         robot1.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         robot1.backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -277,9 +271,9 @@ public class ILTTeleOp extends LinearOpMode {
             public void run() {
                 try {
                     while (!isInterrupted()) {
-                        threadedDistance        = distance.getDistance(DistanceUnit.CM);
-                        leftThreadedDistance    = distanceLeft.getDistance(DistanceUnit.CM);
-                        rightThreadedDistance   = distanceRight.getDistance(DistanceUnit.CM);
+                        threadedDistance        = robot1.distance.getDistance(DistanceUnit.CM);
+                        leftThreadedDistance    = robot1.distanceLeft.getDistance(DistanceUnit.CM);
+                        rightThreadedDistance   = robot1. distanceRight.getDistance(DistanceUnit.CM);
                         idle();
                     }
                 } //catch (InterruptedException e) {

@@ -109,7 +109,7 @@ public class Meet3Blue2Skystone extends LinearOpMode {
             movemento.straightMM(-70, 0.5);
             robot1.autoArm.setPosition(0.25);
             movemento.rotate(90, 0.7);
-            movemento.recalibrate(3, 90, 1);
+            movemento.recalibrate(1, 90, 1);
             movemento.straightMM(150, 1);
             movemento.wallStrafe(2, -0.3);
             movemento.strafe(-10, 0.5);
@@ -117,7 +117,7 @@ public class Meet3Blue2Skystone extends LinearOpMode {
             robot1.autoArm.setPosition(0.4);
             robot1.autoPush.setPosition(0.5);
             sleep(500);
-            movemento.recalibrate(3, 90, 1);
+            movemento.recalibrate(1, 90, 1);
 
             movemento.straightMM(-540, 0.5);
             movemento.strafe(-50, 0.5);
@@ -131,7 +131,7 @@ public class Meet3Blue2Skystone extends LinearOpMode {
             movemento.straightMM(-40, 0.5);
             robot1.autoArm.setPosition(0.25);
             movemento.rotate(90, 0.5);
-            movemento.recalibrate(3, 90, 1);
+            movemento.recalibrate(1, 90, 1);
 
             movemento.straightMM(470, 1);
 
@@ -144,14 +144,15 @@ public class Meet3Blue2Skystone extends LinearOpMode {
             robot1.capstonedropper.setPosition(0);
             movemento.straightMM(-30, 0.4);
             robot1.autoArm.setPosition(0.4);
-            movemento.strafe(-30, 0.5);
+            sleep(1000);
+            //movemento.strafe(10, 0.5);
             movemento.straightMM(60, 0.3);
             robot1.autoPush.setPosition(0);
             sleep(1000);
             movemento.straightMM(-70, 0.5);
             robot1.autoArm.setPosition(0.25);
             movemento.rotate(90, 0.7);
-            movemento.recalibrate(3, 90, 1);
+            movemento.recalibrate(1, 90, 1);
             movemento.strafe(50, 0.5);
             movemento.straightMM(400, 1);
 
@@ -164,7 +165,7 @@ public class Meet3Blue2Skystone extends LinearOpMode {
             movemento.straightMM(-630, 0.5);
             movemento.strafe(-50, 0.5);
             movemento.rotate(-90, 0.7);
-            movemento.recalibrate(3, 0, 1);
+            movemento.recalibrate(1, 0, 1);
 
             movemento.straightMM(60, 0.3);
             robot1.autoPush.setPosition(0);
@@ -172,9 +173,9 @@ public class Meet3Blue2Skystone extends LinearOpMode {
             movemento.straightMM(-40, 0.5);
             robot1.autoArm.setPosition(0.25);
             movemento.rotate(90, 0.75);
-            movemento.recalibrate(3, 90, 1);
+            movemento.recalibrate(1, 90, 1);
 
-            movemento.straightMM(600, 1);
+            movemento.straightMM(580, 1);
 
             robot1.autoArm.setPosition(0.4);
             robot1.autoPush.setPosition(0.5);
@@ -192,7 +193,7 @@ public class Meet3Blue2Skystone extends LinearOpMode {
             movemento.straightMM(-70, 0.5);
             robot1.autoArm.setPosition(0.25);
             movemento.rotate(90, 0.7);
-            movemento.recalibrate(3, 90, 1);
+            movemento.recalibrate(1, 90, 1);
 
             movemento.straightMM(400, 1);
 
@@ -200,12 +201,12 @@ public class Meet3Blue2Skystone extends LinearOpMode {
             robot1.autoPush.setPosition(0.5);
             sleep(500);
 
-            movemento.recalibrate(3, 90, 1);
+            movemento.recalibrate(1, 90, 1);
 
             movemento.straightMM(-580, 0.7);
             movemento.strafe(-50, 0.5);
             movemento.rotate(-90, 0.7);
-            movemento.strafe(40, 0.5);
+            movemento.strafe(50, 0.5);
 
             movemento.straightMM(90, 0.5);
             robot1.autoPush.setPosition(0);
@@ -214,9 +215,9 @@ public class Meet3Blue2Skystone extends LinearOpMode {
             robot1.autoArm.setPosition(0.25);
             movemento.strafe(-50, 0.5);
             movemento.rotate(90, 0.5);
-            movemento.recalibrate(3, 90, 1);
+            movemento.recalibrate(1, 90, 1);
             movemento.strafe(50, 0.5);
-            movemento.straightMM(650, 1);
+            movemento.straightMM(630, 1);
 
             robot1.autoArm.setPosition(0.4);
             robot1.autoPush.setPosition(0.5);
