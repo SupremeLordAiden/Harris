@@ -22,11 +22,16 @@ public class Meet3BlueFoundation extends LinearOpMode {
         // you know that hardware file, here it is being called
         robot1.init(hardwareMap);
         movemento.init(hardwareMap, telemetry, this);
+
         robot1.foundationgrabber.setPosition(0.3);
-        robot1.swipeServo.setPosition(0.3);
+        robot1.swipeServo.setPosition(0.925);
         robot1.grabbythingy.setPosition(0.8);
         robot1.armthingy.setPosition(0.76);
         robot1.capstonedropper.setPosition(0.5);
+
+
+        robot1.autoPush.setPosition(0.6);
+        robot1.autoArm.setPosition(0);
 
         robot1.autoPush2.setPosition(1);
         robot1.autoArm2.setPosition(1);
@@ -56,6 +61,7 @@ public class Meet3BlueFoundation extends LinearOpMode {
         sleep(1000);
         movemento.strafe(-100, 0.5);
         movemento.wallStraight(3, -0.3);
+        movemento.straightMM(10, 0.5);
 
         movemento.wallStrafe(4, -0.3);
         sleep(7000);

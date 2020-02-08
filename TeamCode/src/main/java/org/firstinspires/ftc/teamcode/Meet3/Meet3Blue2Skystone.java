@@ -101,8 +101,9 @@ public class Meet3Blue2Skystone extends LinearOpMode {
         if (SkystonePosition1 == 1) {
             robot1.capstonedropper.setPosition(0);
             movemento.straightMM(-30, 0.4);
-            robot1.autoArm.setPosition(0.46);
-            movemento.strafe(-30, 0.5);
+            robot1.autoArm.setPosition(0.39);
+            sleep(1000);
+            //movemento.strafe(-30, 0.5);
             movemento.straightMM(60, 0.5);
             robot1.autoPush.setPosition(0);
             sleep(1000);
@@ -114,12 +115,12 @@ public class Meet3Blue2Skystone extends LinearOpMode {
             movemento.wallStrafe(2, -0.3);
             movemento.strafe(-10, 0.5);
             movemento.straightMM(150, 0.5);
-            robot1.autoArm.setPosition(0.4);
+            robot1.autoArm.setPosition(0.39);
             robot1.autoPush.setPosition(0.5);
             sleep(500);
             movemento.recalibrate(1, 90, 1);
 
-            movemento.straightMM(-540, 0.5);
+            movemento.straightMM(-560, 0.5);
             movemento.strafe(-50, 0.5);
             movemento.rotate(-90, 0.7);
             movemento.recalibrate(3, 0, 1);
@@ -136,14 +137,14 @@ public class Meet3Blue2Skystone extends LinearOpMode {
             movemento.straightMM(470, 1);
 
 
-            robot1.autoArm.setPosition(0.4);
+            robot1.autoArm.setPosition(0.39);
             robot1.autoPush.setPosition(0.5);
             sleep(500);
             movemento.straightMM(-100, 0.5);
         } else if (SkystonePosition1 == 2) {
             robot1.capstonedropper.setPosition(0);
-            movemento.straightMM(-30, 0.4);
-            robot1.autoArm.setPosition(0.4);
+            movemento.straightMM(-30, 0.395);
+            robot1.autoArm.setPosition(0.39);
             sleep(1000);
             //movemento.strafe(10, 0.5);
             movemento.straightMM(60, 0.3);
@@ -156,7 +157,7 @@ public class Meet3Blue2Skystone extends LinearOpMode {
             movemento.strafe(50, 0.5);
             movemento.straightMM(400, 1);
 
-            robot1.autoArm.setPosition(0.4);
+            robot1.autoArm.setPosition(0.39);
             robot1.autoPush.setPosition(0.5);
             sleep(500);
 
@@ -177,7 +178,7 @@ public class Meet3Blue2Skystone extends LinearOpMode {
 
             movemento.straightMM(580, 1);
 
-            robot1.autoArm.setPosition(0.4);
+            robot1.autoArm.setPosition(0.39);
             robot1.autoPush.setPosition(0.5);
             sleep(500);
             movemento.straightMM(-100, 0.5);
@@ -185,7 +186,7 @@ public class Meet3Blue2Skystone extends LinearOpMode {
             robot1.capstonedropper.setPosition(0);
             movemento.straightMM(-30, 0.4);
             movemento.strafe(7, 0.4);
-            robot1.autoArm.setPosition(0.4);
+            robot1.autoArm.setPosition(0.39);
             sleep(500);
             movemento.straightMM(60, 0.3);
             robot1.autoPush.setPosition(0);
@@ -197,7 +198,7 @@ public class Meet3Blue2Skystone extends LinearOpMode {
 
             movemento.straightMM(400, 1);
 
-            robot1.autoArm.setPosition(0.4);
+            robot1.autoArm.setPosition(0.39);
             robot1.autoPush.setPosition(0.5);
             sleep(500);
 
@@ -208,18 +209,18 @@ public class Meet3Blue2Skystone extends LinearOpMode {
             movemento.rotate(-90, 0.7);
             movemento.strafe(50, 0.5);
 
-            movemento.straightMM(90, 0.5);
+            movemento.forwardMMwithDistanceRight(90, 0.5, 10);
             robot1.autoPush.setPosition(0);
             sleep(1000);
             movemento.straightMM(-80, 0.5);
-            robot1.autoArm.setPosition(0.25);
+            robot1.autoArm.setPosition(0.3);
             movemento.strafe(-50, 0.5);
             movemento.rotate(90, 0.5);
             movemento.recalibrate(1, 90, 1);
             movemento.strafe(50, 0.5);
             movemento.straightMM(630, 1);
 
-            robot1.autoArm.setPosition(0.4);
+            robot1.autoArm.setPosition(0.39);
             robot1.autoPush.setPosition(0.5);
             sleep(500);
             movemento.straightMM(-120, 1);
