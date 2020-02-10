@@ -36,6 +36,11 @@ public class Movement1 {
     //correction from angle and the global angle
     double correction, globalAngle;
 
+    PIDController pidRotate;
+
+    PIDController pidDrive;
+
+    PIDController pidDistanceDrive;
     //since hardwaremap is a function that can only be used in an autonomous or teleop code, we had to do a loop and this will equal hardwareMap in the init
     HardwareMap hwMap = null;
     //same thing for telemetry
@@ -80,7 +85,123 @@ public class Movement1 {
         robot1.rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot1.backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        pidRotate = new PIDController(.008, .00008, 0);
+
+        pidDrive = new PIDController(.05, 0, 0);
+
+        pidDistanceDrive = new PIDController(.008, .00008, 0);
     }
+
+    public void pidStraight(int MM, double power) {
+        double encodercounts = 7.672 * MM;
+        pidDrive.setSetpoint(0);
+        pidDrive.setOutputRange(0, 0.3);
+        pidDrive.setInputRange(-90, 90);
+        pidDrive.enable();
+
+        pidDistanceDrive.setSetpoint(-encodercounts);
+        pidDistanceDrive.setOutputRange(0.1, power);
+        pidDistanceDrive.setInputRange(-20000000, 20000000);
+        pidRotate.setTolerance(1);
+        pidDistanceDrive.enable();
+
+        if (encodercounts < 0)
+        {
+            // On right turn we have to get off zero first.
+
+            do
+            {
+                power = pidDistanceDrive.performPID(robot1.encoderMotor.getCurrentPosition()); // power will be - on right turn.
+                correction = pidDrive.performPID(getAngle());
+                robot1.leftDrive.setPower(power + correction);
+                robot1.rightDrive.setPower(power - correction);
+                robot1.backLeftDrive.setPower(power + correction);
+                robot1.backRightDrive.setPower(power - correction);
+            } while (useless.opModeIsActive() && !pidDistanceDrive.onTarget());
+        }
+        else    // left turn.
+            do
+            {
+                power = pidDistanceDrive.performPID(robot1.encoderMotor.getCurrentPosition()); // power will be + on left turn.
+                correction = pidDrive.performPID(getAngle());
+                robot1.leftDrive.setPower(power + correction);
+                robot1.rightDrive.setPower(power - correction);
+                robot1.backLeftDrive.setPower(power + correction);
+                robot1.backRightDrive.setPower(power - correction);
+            } while (useless.opModeIsActive() && !pidDistanceDrive.onTarget());
+
+        // turn the motors off.
+        robot1.leftDrive.setPower(0);
+        robot1.rightDrive.setPower(0);
+        robot1.backLeftDrive.setPower(0);
+        robot1.backRightDrive.setPower(0);
+
+
+
+        // wait for rotation to stop.
+        useless.sleep(500);
+
+        // reset angle tracking on new heading.
+        resetAngle();
+
+
+    }
+    public void pidRotate(int angle, double power) {
+        if (Math.abs(angle) > 359) angle = (int) Math.copySign(359, angle);
+        pidRotate.reset();
+        pidRotate.setSetpoint(angle);
+        pidRotate.setInputRange(0, angle);
+        pidRotate.setOutputRange(0, 1);
+        pidRotate.setTolerance(0.5);
+        pidRotate.enable();
+
+        if (angle < 0)
+        {
+            // On right turn we have to get off zero first.
+            while (useless.opModeIsActive() && getAngle() == 0)
+            {
+
+                robot1.leftDrive.setPower(-power);
+                robot1.rightDrive.setPower(power);
+                robot1.backLeftDrive.setPower(-power);
+                robot1.backRightDrive.setPower(power);
+                useless.sleep(100);
+            }
+
+            do
+            {
+                power = pidRotate.performPID(getAngle()); // power will be - on right turn.
+                robot1.leftDrive.setPower(power);
+                robot1.rightDrive.setPower(-power);
+                robot1.backLeftDrive.setPower(power);
+                robot1.backRightDrive.setPower(-power);
+            } while (useless.opModeIsActive() && !pidRotate.onTarget());
+        }
+        else    // left turn.
+            do
+            {
+                power = pidRotate.performPID(getAngle()); // power will be + on left turn.
+                robot1.leftDrive.setPower(power);
+                robot1.rightDrive.setPower(-power);
+                robot1.backLeftDrive.setPower(power);
+                robot1.backRightDrive.setPower(-power);
+            } while (useless.opModeIsActive() && !pidRotate.onTarget());
+
+        // turn the motors off.
+        robot1.leftDrive.setPower(0);
+        robot1.rightDrive.setPower(0);
+        robot1.backLeftDrive.setPower(0);
+        robot1.backRightDrive.setPower(0);
+
+
+
+        // wait for rotation to stop.
+        useless.sleep(500);
+
+        // reset angle tracking on new heading.
+        resetAngle();
+    }
+
     //recalibrate uses the Global imu to keep track of the angle relative to the starting position
     public void recalibrate(int seconds, int angle, double maxSpeed) {
         ElapsedTime currentTime  = new ElapsedTime();
