@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.Meet3;
+package org.firstinspires.ftc.teamcode.ILT;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,10 +12,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.HardWare1;
 import org.firstinspires.ftc.teamcode.Movement1;
 
-@Autonomous(name="Auto Yeet 3 Blue 2 Skystone", group="Linear Opmode")
-@Disabled
+@Autonomous(name="ILT Blue 2 Skystone", group="Linear Opmode")
 
-public class Meet3Blue2Skystone extends LinearOpMode {
+
+public class ILTBlue2Skystone extends LinearOpMode {
 
     // Declare OpMode members(motors, servos, and sensors).
     Movement1 movemento = new Movement1();
@@ -101,50 +100,50 @@ public class Meet3Blue2Skystone extends LinearOpMode {
         }
         if (SkystonePosition1 == 1) {
             robot1.capstonedropper.setPosition(0);
-            movemento.straightMM(-30, 0.4);
+            movemento.pidStraight(-30, 1);
             robot1.autoArm.setPosition(0.39);
-            sleep(1000);
+            sleep(750);
             //movemento.strafe(-30, 0.5);
-            movemento.straightMM(60, 0.5);
+            movemento.pidStraight(60, 0.75);
             robot1.autoPush.setPosition(0);
-            sleep(1000);
-            movemento.straightMM(-70, 0.5);
+            sleep(750);
+            movemento.pidStraight(-70, 1);
             robot1.autoArm.setPosition(0.25);
             movemento.pidRotate(90, 1);
-            //movemento.rotate(90, 0.7);
-            //movemento.recalibrate(1, 90, 1);
-            movemento.straightMM(150, 1);
-            movemento.wallStrafe(2, -0.3);
-            movemento.strafe(-10, 0.5);
-            movemento.straightMM(150, 0.5);
+
+            movemento.pidStraight(300, 1);
+
+
+
             robot1.autoArm.setPosition(0.39);
             robot1.autoPush.setPosition(0.5);
             sleep(500);
-            movemento.recalibrate(1, 90, 1);
-
-            movemento.straightMM(-560, 0.5);
-            movemento.strafe(-50, 0.5);
+            robot1.autoArm.setPosition(0.25);
+            movemento.pidStraight(-55s0, 1);
+            robot1.autoArm.setPosition(0.39);
             movemento.pidRotate(-90, 1);
-            //movemento.rotate(-90, 0.7);
-            //movemento.recalibrate(3, 0, 1);
 
 
-            movemento.straightMM(50, 0.5);
+
+
+
+
+
+            movemento.pidStraight(50, 0.75);
             robot1.autoPush.setPosition(0);
             sleep(1000);
-            movemento.straightMM(-40, 0.5);
+            movemento.pidStraight(-80, 1);
             robot1.autoArm.setPosition(0.25);
-            movemento.pidRotate(90, 1);
-            //movemento.rotate(90, 0.5);
-            //movemento.recalibrate(1, 90, 1);
+            movemento.pidRotate(90, 0.75);
+            movemento.pidStrafe(30, 1);
 
-            movemento.straightMM(470, 1);
+            movemento.pidStraight(470, 1);
 
 
             robot1.autoArm.setPosition(0.39);
             robot1.autoPush.setPosition(0.5);
             sleep(500);
-            movemento.straightMM(-100, 0.5);
+            movemento.pidStraight(-100, 1);
         } else if (SkystonePosition1 == 2) {
             robot1.capstonedropper.setPosition(0);
             movemento.straightMM(-30, 0.395);

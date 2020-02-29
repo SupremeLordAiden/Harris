@@ -41,6 +41,8 @@ public class Movement1 {
     PIDController pidDrive;
 
     PIDController pidDistanceDrive;
+
+    PIDController pidStrafe;
     //since hardwaremap is a function that can only be used in an autonomous or teleop code, we had to do a loop and this will equal hardwareMap in the init
     HardwareMap hwMap = null;
     //same thing for telemetry
@@ -87,27 +89,29 @@ public class Movement1 {
 
         pidRotate = new PIDController(.008, .00008, 0);
 
-        pidDrive = new PIDController(.05, 0, 0);
+        pidDrive = new PIDController(.01, 0, 0);
 
-        pidDistanceDrive = new PIDController(.008, .00008, 0);
+
     }
 
     public void pidStraight(int MM, double power) {
-        double encodercounts = 7.672 * MM;
+        robot1.encoderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        double preciseencodercount = 7.672 * MM;
+        double encodercounts = java.lang.Math.round(preciseencodercount);
+
         pidDrive.setSetpoint(0);
         pidDrive.setOutputRange(0, 0.3);
         pidDrive.setInputRange(-90, 90);
         pidDrive.enable();
 
+        pidDistanceDrive = new PIDController(Math.abs(power/MM), Math.abs(power/100*MM), 0);
         pidDistanceDrive.setSetpoint(-encodercounts);
-        pidDistanceDrive.setOutputRange(0.1, power);
-        pidDistanceDrive.setInputRange(-20000000, 20000000);
-        pidRotate.setTolerance(1);
+        pidDistanceDrive.setOutputRange(0.05, power);
+        pidDistanceDrive.setInputRange(0, encodercounts);
+        pidDistanceDrive.setTolerance(1);
         pidDistanceDrive.enable();
 
-        if (encodercounts < 0)
-        {
-            // On right turn we have to get off zero first.
 
             do
             {
@@ -117,17 +121,15 @@ public class Movement1 {
                 robot1.rightDrive.setPower(power - correction);
                 robot1.backLeftDrive.setPower(power + correction);
                 robot1.backRightDrive.setPower(power - correction);
-            } while (useless.opModeIsActive() && !pidDistanceDrive.onTarget());
-        }
-        else    // left turn.
-            do
-            {
-                power = pidDistanceDrive.performPID(robot1.encoderMotor.getCurrentPosition()); // power will be + on left turn.
-                correction = pidDrive.performPID(getAngle());
-                robot1.leftDrive.setPower(power + correction);
-                robot1.rightDrive.setPower(power - correction);
-                robot1.backLeftDrive.setPower(power + correction);
-                robot1.backRightDrive.setPower(power - correction);
+
+                telemetry.addData("1 imu heading", lastAngles.firstAngle);
+                telemetry.addData("2 global heading", globalAngle);
+                telemetry.addData("3 correction", correction);
+                telemetry.addData("4 encoder target", encodercounts);
+                telemetry.addData("5 Encoder Position", robot1.leftDrive.getCurrentPosition());
+                robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                telemetry.update();
+
             } while (useless.opModeIsActive() && !pidDistanceDrive.onTarget());
 
         // turn the motors off.
@@ -137,9 +139,9 @@ public class Movement1 {
         robot1.backRightDrive.setPower(0);
 
 
+        robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // wait for rotation to stop.
-        useless.sleep(500);
+
 
         // reset angle tracking on new heading.
         resetAngle();
@@ -147,12 +149,14 @@ public class Movement1 {
 
     }
     public void pidRotate(int angle, double power) {
+        robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         if (Math.abs(angle) > 359) angle = (int) Math.copySign(359, angle);
         pidRotate.reset();
+        //pidRotate = new PIDController(Math.abs(power/angle), Math.abs(power/100*angle), 0);
         pidRotate.setSetpoint(angle);
         pidRotate.setInputRange(0, angle);
         pidRotate.setOutputRange(0, 1);
-        pidRotate.setTolerance(0.5);
+        pidRotate.setTolerance(1);
         pidRotate.enable();
 
         if (angle < 0)
@@ -166,6 +170,12 @@ public class Movement1 {
                 robot1.backLeftDrive.setPower(-power);
                 robot1.backRightDrive.setPower(power);
                 useless.sleep(100);
+                telemetry.addData("1 imu heading", lastAngles.firstAngle);
+                telemetry.addData("2 global heading", globalAngle);
+                telemetry.addData("3 correction", correction);
+                telemetry.addData("5 Encoder Position", robot1.leftDrive.getCurrentPosition());
+                robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                telemetry.update();
             }
 
             do
@@ -175,6 +185,12 @@ public class Movement1 {
                 robot1.rightDrive.setPower(-power);
                 robot1.backLeftDrive.setPower(power);
                 robot1.backRightDrive.setPower(-power);
+                telemetry.addData("1 imu heading", lastAngles.firstAngle);
+                telemetry.addData("2 global heading", globalAngle);
+                telemetry.addData("3 correction", correction);
+                telemetry.addData("5 Encoder Position", robot1.leftDrive.getCurrentPosition());
+                robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                telemetry.update();
             } while (useless.opModeIsActive() && !pidRotate.onTarget());
         }
         else    // left turn.
@@ -185,6 +201,12 @@ public class Movement1 {
                 robot1.rightDrive.setPower(-power);
                 robot1.backLeftDrive.setPower(power);
                 robot1.backRightDrive.setPower(-power);
+                telemetry.addData("1 imu heading", lastAngles.firstAngle);
+                telemetry.addData("2 global heading", globalAngle);
+                telemetry.addData("3 correction", correction);
+                telemetry.addData("5 Encoder Position", robot1.leftDrive.getCurrentPosition());
+                robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                telemetry.update();
             } while (useless.opModeIsActive() && !pidRotate.onTarget());
 
         // turn the motors off.
@@ -202,6 +224,83 @@ public class Movement1 {
         resetAngle();
     }
 
+    public void pidStrafe(int MM, double power) {
+        robot1.encoderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        double preciseencodercount = 7.672 * MM;
+        double encodercounts = java.lang.Math.round(preciseencodercount);
+
+        pidDrive.setSetpoint(0);
+        pidDrive.setOutputRange(0, 0.3);
+        pidDrive.setInputRange(-90, 90);
+        pidDrive.enable();
+
+        pidStrafe = new PIDController(Math.abs(power/MM), Math.abs(power/100*MM), 0);
+        pidStrafe.setSetpoint(-encodercounts);
+        pidStrafe.setOutputRange(0.1, power);
+        pidStrafe.setInputRange(0, encodercounts);
+        pidStrafe.setTolerance(1);
+        pidStrafe.enable();
+
+        if (encodercounts < 0)
+        {
+            // On right turn we have to get off zero first.
+
+            do
+            {
+                power = pidStrafe.performPID(robot1.encoderMotor.getCurrentPosition()); // power will be - on right turn.
+                correction = pidDrive.performPID(getAngle());
+                robot1.leftDrive.setPower((power + correction));
+                robot1.rightDrive.setPower(-(power + correction));
+                robot1.backLeftDrive.setPower(-(power - correction));
+                robot1.backRightDrive.setPower((power - correction));
+
+                telemetry.addData("1 imu heading", lastAngles.firstAngle);
+                telemetry.addData("2 global heading", globalAngle);
+                telemetry.addData("3 correction", correction);
+                telemetry.addData("4 encoder target", encodercounts);
+                telemetry.addData("5 Encoder Position", robot1.leftDrive.getCurrentPosition());
+                robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                telemetry.update();
+
+            } while (useless.opModeIsActive() && !pidStrafe.onTarget());
+        }
+        else    // left turn.
+            do
+            {
+                power = pidStrafe.performPID(robot1.encoderMotor.getCurrentPosition()); // power will be + on left turn.
+                correction = pidDrive.performPID(getAngle());
+                robot1.leftDrive.setPower((power + correction));
+                robot1.rightDrive.setPower(-(power + correction));
+                robot1.backLeftDrive.setPower(-(power - correction));
+                robot1.backRightDrive.setPower((power - correction));
+
+                telemetry.addData("1 imu heading", lastAngles.firstAngle);
+                telemetry.addData("2 global heading", globalAngle);
+                telemetry.addData("3 correction", correction);
+                telemetry.addData("4 encoder target", encodercounts);
+                telemetry.addData("5 Encoder Position", robot1.leftDrive.getCurrentPosition());
+                robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                telemetry.update();
+            } while (useless.opModeIsActive() && !pidStrafe.onTarget());
+
+        // turn the motors off.
+        robot1.leftDrive.setPower(0);
+        robot1.rightDrive.setPower(0);
+        robot1.backLeftDrive.setPower(0);
+        robot1.backRightDrive.setPower(0);
+
+
+        robot1.leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+
+        // reset angle tracking on new heading.
+        resetAngle();
+
+
+    }
     //recalibrate uses the Global imu to keep track of the angle relative to the starting position
     public void recalibrate(int seconds, int angle, double maxSpeed) {
         ElapsedTime currentTime  = new ElapsedTime();
@@ -466,7 +565,7 @@ public class Movement1 {
 
 
 
-public void straightMM(int MM, double power) {
+    public void straightMM(int MM, double power) {
     resetAngle();
 
     double encodercounts = 7.672 * MM;
@@ -584,10 +683,10 @@ public void straightMM(int MM, double power) {
 }
 
 
-/*
-wall straight runs the motors with time, with no feedback to keep in straight
-only used for ramming into walls
- */
+    /*
+    wall straight runs the motors with time, with no feedback to keep in straight
+    only used for ramming into walls
+     */
     public void wallStraight(int time, double power) {
         runtime.reset();
 

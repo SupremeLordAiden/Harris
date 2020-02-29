@@ -56,11 +56,26 @@ public class HarrisTestingAuto extends LinearOpMode {
 
         waitForStart();
         robot1.capstonedropper.setPosition(1);
-        movemento.pidStraight(100, 0.5);
+        movemento.pidStraight(750, 1);
+        movemento.pidStraight(-750, 1);
+        /*movemento.pidStraight(400, 1);
+        movemento.rotate(135, 1);
         //movemento.pidRotate(135, 1);
-        //movemento.pidRotate(-135, 1);
-        //movemento.pidRotate(90, 1);
-        //movemento.pidRotate(-90, 1);
+        movemento.pidRotate(-135, 1);
+        movemento.pidRotate(90, 1);
+        movemento.pidStrafe(100, 1);
+        sleep(1000);
+        movemento.pidStrafe(-100, 1);
+
+        movemento.pidRotate(-90, 1);
+        movemento.pidStrafe(-100, 1);
+
+        movemento.pidStraight(-400, 1);
+        movemento.pidStrafe(100, 1);
+
+         */
+
+
     }
 
 

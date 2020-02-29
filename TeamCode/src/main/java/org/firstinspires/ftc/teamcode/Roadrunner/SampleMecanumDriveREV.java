@@ -23,6 +23,7 @@ import static org.firstinspires.ftc.teamcode.Roadrunner.DriveConstants.encoderTi
 import static org.firstinspires.ftc.teamcode.Roadrunner.DriveConstants.getMotorVelocityF;
 
 
+
 /*
  * Simple mecanum drive hardware implementation for REV hardware. If your hardware configuration
  * satisfies the requirements, SampleMecanumDriveREVOptimized is highly recommended.
@@ -45,7 +46,7 @@ public class SampleMecanumDriveREV extends org.firstinspires.ftc.teamcode.drive.
 
         // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
         // upward (normal to the floor) using a command like the following:
-        org.firstinspires.ftc.teamcode.util.BNO055IMUUtil.remapAxes(imu, AxesOrder.ZYX, org.firstinspires.ftc.teamcode.util.AxesSigns.NPN);
+        BNO055IMUUtil.remapAxes(imu, AxesOrder.YZX, AxesSigns.NPN);
 
         leftFront = hardwareMap.get(DcMotorEx.class, "left_drive");
         leftRear = hardwareMap.get(DcMotorEx.class, "back_left_drive");

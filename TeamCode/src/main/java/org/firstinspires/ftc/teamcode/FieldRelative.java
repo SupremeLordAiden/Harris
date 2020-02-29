@@ -1,17 +1,24 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.control.PIDFController;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.opencv.core.Mat;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 
-@TeleOp(name="ILTTeleOp", group="Linear Opmode")
+@TeleOp(name="FieldRelative", group="Linear Opmode")
 
-public class ILTTeleOp extends LinearOpMode {
+public class FieldRelative extends LinearOpMode {
 
     // Declare OpMode members(motors, servos, and sensors).
 
@@ -21,6 +28,8 @@ public class ILTTeleOp extends LinearOpMode {
     double threadedDistance         = 0;
     double rightThreadedDistance    = 0;
     double leftThreadedDistance     = 0;
+    BNO055IMU imuGlobal;
+
 
 
     @Override
@@ -49,6 +58,20 @@ public class ILTTeleOp extends LinearOpMode {
         // Reverse the motor that runs backwards when connected directly to the battery
 
         // Wait for the game to start (driver presses PLAY)
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = false;
+
+        //this is how hardwareMpa pairs up the software object and the hardware object with the device
+
+        imuGlobal = hardwareMap.get(BNO055IMU.class, "imuGlobal");
+
+        imuGlobal.initialize(parameters);
 
         robot1.autoPush.setPosition(0.8);
         robot1.autoArm.setPosition(0);
@@ -131,7 +154,11 @@ public class ILTTeleOp extends LinearOpMode {
             // yay math! hypotenuse measures the length/ magnitude on the movement
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
 
-            double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+
+
+            double RobotFieldAngle = -getGlobalAngle() * Math.PI / 180;
+            double controllerAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+            double robotAngle      = controllerAngle - RobotFieldAngle;
             double rightX = gamepad1.right_stick_x;
 
             //this part is basically multiplying the speed by the adjusted speed with the control speed set by the 2 buttons
@@ -227,9 +254,9 @@ public class ILTTeleOp extends LinearOpMode {
 
 
             if (gamepad2.left_bumper == true) {
-                robot1.tapeMeasure.setPower(1);
+                robot1.tapeMeasure.setPower(0.8);
             } else if (gamepad2.right_bumper == true) {
-                robot1.tapeMeasure.setPower(-1);
+                robot1.tapeMeasure.setPower(-0.8);
             } else {
                 robot1.tapeMeasure.setPower(0);
             }
@@ -261,6 +288,10 @@ public class ILTTeleOp extends LinearOpMode {
             telemetry.addData("right Distance", rightThreadedDistance);
             telemetry.addData("left Distance", leftThreadedDistance);
             telemetry.addData("grabbythingy", robot1.grabbythingy.getPosition());
+            telemetry.addData("angle Degrees", getGlobalAngle());
+            telemetry.addData("RobotFieldAngle", RobotFieldAngle);
+            telemetry.addData("controllerangle", controllerAngle);
+            telemetry.addData("robotangle", robotAngle);
             telemetry.update();
 
         }
@@ -268,24 +299,34 @@ public class ILTTeleOp extends LinearOpMode {
     }
     private class sensorThread extends Thread {
         public sensorThread() {
-                this.setName("sensorThread");
-            }
-            @Override
-            public void run() {
-                try {
-                    while (!isInterrupted()) {
-                        threadedDistance        = robot1.distance.getDistance(DistanceUnit.CM);
-                        leftThreadedDistance    = robot1.distanceLeft.getDistance(DistanceUnit.CM);
-                        rightThreadedDistance   = robot1. distanceRight.getDistance(DistanceUnit.CM);
-                        idle();
-                    }
-                } //catch (InterruptedException e) {
-                //dab
-                // }
-                catch (Exception e) {
-                    //hi
-                }
+            this.setName("sensorThread");
         }
+        @Override
+        public void run() {
+            try {
+                while (!isInterrupted()) {
+                    threadedDistance        = robot1.distance.getDistance(DistanceUnit.CM);
+                    leftThreadedDistance    = robot1.distanceLeft.getDistance(DistanceUnit.CM);
+                    rightThreadedDistance   = robot1. distanceRight.getDistance(DistanceUnit.CM);
+                    idle();
+                }
+            } //catch (InterruptedException e) {
+            //dab
+            // }
+            catch (Exception e) {
+                //hi
+            }
+        }
+    }
+    public double getGlobalAngle()
+    {
+
+
+        Orientation angles = imuGlobal.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+
+
+        return angles.firstAngle;
     }
 }
 
