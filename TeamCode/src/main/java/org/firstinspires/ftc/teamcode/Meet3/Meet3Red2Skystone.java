@@ -100,11 +100,11 @@ public class Meet3Red2Skystone extends LinearOpMode {
         if (SkystonePosition1 == 1) {
             robot1.autoArm.setPosition(0.39);
             robot1.capstonedropper.setPosition(0);
-            movemento.straightMM(-10, 0.4);
+            movemento.straightMM(-20, 0.4);
 
 
             sleep(1000);
-            movemento.straightMM(30, 0.5);
+            movemento.straightMM(40, 0.5);
             robot1.autoPush.setPosition(0);
             sleep(1000);
             movemento.straightMM(-90, 0.5);
@@ -140,7 +140,7 @@ public class Meet3Red2Skystone extends LinearOpMode {
             robot1.autoArm.setPosition(0.3);
             robot1.autoPush.setPosition(0.5);
             sleep(500);
-            movemento.straightMM(-150, 1);
+            movemento.straightMM(-100, 1);
 
 
         } else if (SkystonePosition1 == 2) {
@@ -151,10 +151,9 @@ public class Meet3Red2Skystone extends LinearOpMode {
             movemento.straightMM(50, 0.5);
             robot1.autoPush.setPosition(0);
             sleep(1000);
-            movemento.straightMM(-80, 0.5);
+            movemento.straightMM(-50, 0.5);
             robot1.autoArm.setPosition(0.3);
-            movemento.rotate(-90, 0.4);
-            movemento.recalibrate(1, -90, 1);
+            movemento.pidRotate(-90, 1);
             movemento.straightMM(480, 1);
 
             robot1.autoArm.setPosition(0.3);
@@ -164,23 +163,22 @@ public class Meet3Red2Skystone extends LinearOpMode {
             robot1.autoPush.setPosition(0.6);
             robot1.autoArm.setPosition(0);
 
-            movemento.recalibrate(1, -90, 1);
 
 
             movemento.straightMM(-540, 0.75);
 
             robot1.autoPush2.setPosition(0.5);
             robot1.autoArm2.setPosition(0.6);
-            movemento.rotate(90, 0.5);
+            movemento.pidRotate(90, 1);
 
             movemento.forwardMMwithDistanceLeft(100, 0.3, 10);
             robot1.autoPush2.setPosition(0.9);
             sleep(1000);
             movemento.straightMM(-70, 0.5);
             robot1.autoArm2.setPosition(0.7);
-            movemento.rotate(-90, 0.5);
-            movemento.recalibrate(1, -90, 1);
-            movemento.straightMM(550,1);
+            movemento.pidRotate(-89, 1);
+
+            movemento.pidStraight(550,1);
             robot1.autoPush2.setPosition(0);
             robot1.autoArm2.setPosition(0.65);
             sleep(1000);
@@ -200,7 +198,7 @@ public class Meet3Red2Skystone extends LinearOpMode {
             sleep(1000);
             movemento.straightMM(-100, 0.5);
             robot1.autoArm.setPosition(0.3);
-            movemento.rotate(-90, 0.6);
+            movemento.pidRotate(-90, 0.6);
             movemento.recalibrate(1, -90, 1);
             movemento.straightMM(520, 1);
 
@@ -219,7 +217,7 @@ public class Meet3Red2Skystone extends LinearOpMode {
             movemento.strafe(-70, 0.5);
             robot1.capstonedropper.setPosition(0.5);
 
-            movemento.rotate(90, 0.5);
+            movemento.pidRotate(90, 0.5);
             movemento.wallStrafe(1, 0.5);
             movemento.strafe(10, 0.5);
             movemento.forwardMMwithDistanceLeft(80, 0.5, 10);
@@ -228,8 +226,7 @@ public class Meet3Red2Skystone extends LinearOpMode {
             movemento.straightMM(-70, 0.5);
             robot1.autoArm2.setPosition(0.7);
             movemento.strafe(50, 0.5);
-            movemento.rotate(-90, 0.5);
-            movemento.recalibrate(1, -90, 1);
+            movemento.pidRotate(-90, 0.5);
             robot1.capstonedropper.setPosition(0);
             movemento.straightMM(650,1);
             robot1.autoPush2.setPosition(0);

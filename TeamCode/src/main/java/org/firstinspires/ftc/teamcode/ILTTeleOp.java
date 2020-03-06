@@ -102,7 +102,7 @@ public class ILTTeleOp extends LinearOpMode {
 
 
             if (gamepad2.dpad_left) {
-                robot1.grabbythingy.setPosition(0.80);
+                robot1.grabbythingy.setPosition(0.775);
                 isChainOutside = false;
             } else if (gamepad2.dpad_right) {
 

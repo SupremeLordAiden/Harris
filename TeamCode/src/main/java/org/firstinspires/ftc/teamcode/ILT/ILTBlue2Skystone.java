@@ -119,7 +119,7 @@ public class ILTBlue2Skystone extends LinearOpMode {
             robot1.autoPush.setPosition(0.5);
             sleep(500);
             robot1.autoArm.setPosition(0.25);
-            movemento.pidStraight(-55s0, 1);
+            movemento.pidStraight(-550, 1);
             robot1.autoArm.setPosition(0.39);
             movemento.pidRotate(-90, 1);
 
