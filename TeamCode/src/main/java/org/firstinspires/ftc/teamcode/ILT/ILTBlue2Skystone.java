@@ -119,7 +119,7 @@ public class ILTBlue2Skystone extends LinearOpMode {
             robot1.autoPush.setPosition(0.5);
             sleep(500);
             robot1.autoArm.setPosition(0.25);
-            movemento.pidStraight(-550, 1);
+            movemento.pidStraight(-530, 1);
             robot1.autoArm.setPosition(0.39);
             movemento.pidRotate(-90, 1);
 
@@ -146,17 +146,17 @@ public class ILTBlue2Skystone extends LinearOpMode {
             movemento.pidStraight(-100, 1);
         } else if (SkystonePosition1 == 2) {
             robot1.capstonedropper.setPosition(0);
-            movemento.straightMM(-30, 0.395);
+            movemento.pidStraight(-30, 1);
             robot1.autoArm.setPosition(0.39);
             sleep(1000);
             //movemento.strafe(10, 0.5);
-            movemento.straightMM(60, 0.3);
+            movemento.pidStraight(60, 1);
             robot1.autoPush.setPosition(0);
             sleep(1000);
-            movemento.straightMM(-70, 0.5);
+            movemento.pidStraight(-70, 1);
             robot1.autoArm.setPosition(0.25);
-            movemento.rotate(90, 0.7);
-            movemento.recalibrate(1, 90, 1);
+            movemento.pidRotate(90, 0.7);
+
             movemento.strafe(50, 0.5);
             movemento.straightMM(400, 1);
 
@@ -176,8 +176,8 @@ public class ILTBlue2Skystone extends LinearOpMode {
             sleep(1000);
             movemento.straightMM(-40, 0.5);
             robot1.autoArm.setPosition(0.25);
-            movemento.rotate(90, 0.75);
-            movemento.recalibrate(1, 90, 1);
+            movemento.pidRotate(90, 0.75);
+
 
             movemento.straightMM(580, 1);
 
@@ -188,7 +188,7 @@ public class ILTBlue2Skystone extends LinearOpMode {
         } else if (SkystonePosition1 == 3) {
             robot1.capstonedropper.setPosition(0);
             movemento.straightMM(-30, 0.4);
-            movemento.strafe(7, 0.4);
+            movemento.strafe(20, 0.4);
             robot1.autoArm.setPosition(0.39);
             sleep(500);
             movemento.straightMM(60, 0.3);
@@ -196,8 +196,8 @@ public class ILTBlue2Skystone extends LinearOpMode {
             sleep(1000);
             movemento.straightMM(-70, 0.5);
             robot1.autoArm.setPosition(0.25);
-            movemento.rotate(90, 0.7);
-            movemento.recalibrate(1, 90, 1);
+            movemento.pidRotate(90, 0.7);
+
 
             movemento.straightMM(400, 1);
 
@@ -209,7 +209,7 @@ public class ILTBlue2Skystone extends LinearOpMode {
 
             movemento.straightMM(-580, 0.7);
             movemento.strafe(-50, 0.5);
-            movemento.rotate(-90, 0.7);
+            movemento.pidRotate(-90, 0.7);
             movemento.strafe(50, 0.5);
 
             movemento.forwardMMwithDistanceRight(90, 0.5, 10);
@@ -218,9 +218,9 @@ public class ILTBlue2Skystone extends LinearOpMode {
             movemento.straightMM(-80, 0.5);
             robot1.autoArm.setPosition(0.3);
             movemento.strafe(-50, 0.5);
-            movemento.rotate(90, 0.5);
+            movemento.pidRotate(90, 0.5);
             movemento.recalibrate(1, 90, 1);
-            movemento.strafe(50, 0.5);
+            movemento.strafe(75, 0.5);
             movemento.straightMM(630, 1);
 
             robot1.autoArm.setPosition(0.39);
